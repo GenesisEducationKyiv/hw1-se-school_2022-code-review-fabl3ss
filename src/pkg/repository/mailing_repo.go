@@ -29,8 +29,8 @@ func NewMailingRepository(srv *gmail.Service) domain.MailingRepository {
 
 func (m *mailingRepository) updateOauthToken() error {
 	service, err := gmail_api.UpdateService(
-		os.Getenv("GMAIL_CREDENTIALS_PATH"),
-		os.Getenv("GMAIL_TOKEN_PATH"),
+		os.Getenv(config.GmailCredentialsPath),
+		os.Getenv(config.GmailTokenPath),
 	)
 	if err != nil {
 		return err
@@ -107,7 +107,9 @@ func (m *mailingRepository) GetMessageBody(bannerURL string) (string, error) {
 	v := struct {
 		Chart string
 	}{Chart: bannerURL}
-	t, _ := template.ParseFiles(os.Getenv("CRYPTO_MESSAGE_HTML"))
+	t, _ := template.ParseFiles(
+		os.Getenv(config.CryptoHtmlMessagePath),
+	)
 
 	err := t.Execute(&htmlContent, v)
 	if err != nil {

@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"genesis_test_case/src/config"
-	domain2 "genesis_test_case/src/pkg/domain"
+	"genesis_test_case/src/pkg/domain"
 	"genesis_test_case/src/pkg/repository"
 )
 
@@ -10,13 +10,13 @@ type mailingUsecase struct {
 	repos *repository.Repositories
 }
 
-func NewMailingUsecase(r *repository.Repositories) domain2.MailingUsecase {
+func NewMailingUsecase(r *repository.Repositories) domain.MailingUsecase {
 	return &mailingUsecase{
 		repos: r,
 	}
 }
 
-func (m *mailingUsecase) Subscribe(recipient *domain2.Recipient) error {
+func (m *mailingUsecase) Subscribe(recipient *domain.Recipient) error {
 	subscribed, err := m.repos.Mailing.GetSubscribed()
 	if err != nil {
 		return err

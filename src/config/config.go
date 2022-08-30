@@ -23,13 +23,13 @@ var (
 func Get() *Config {
 	once.Do(func() {
 		cfg = Config{
-			ServerURL:           os.Getenv("SERVER_URL"),
-			ServerReadTimeout:   os.Getenv("SERVER_READ_TIMEOUT"),
-			CryptoApiFormatUrl:  os.Getenv("CRYPTO_API_FORMAT_URL"),
-			CryptoApiCandlesUrl: os.Getenv("CRYPTO_API_CANDLES_URL"),
-			BaseCurrency:        os.Getenv("BASE_CURRENCY"),
-			QuoteCurrency:       os.Getenv("QUOTED_CURRENCY"),
-			StorageFile:         os.Getenv("STORAGE_FILE_PATH"),
+			ServerURL:           os.Getenv(ServerUrl),
+			ServerReadTimeout:   os.Getenv(ServerReadTimeout),
+			CryptoApiFormatUrl:  os.Getenv(CryptoApiFormatUrl),
+			CryptoApiCandlesUrl: os.Getenv(CryptoApiCandlesUrl),
+			BaseCurrency:        os.Getenv(BaseCurrency),
+			QuoteCurrency:       os.Getenv(QuoteCurrency),
+			StorageFile:         os.Getenv(StorageFilePath),
 		}
 	})
 	return &cfg

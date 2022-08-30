@@ -4,10 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"time"
 
+	"genesis_test_case/src/config"
 	"genesis_test_case/src/pkg/domain"
 	"genesis_test_case/src/pkg/utils"
 )
@@ -27,7 +29,7 @@ func (i *imageRepository) GetCryptoBannerUrl(chart []float64, rate *domain.Curre
 }
 
 func (i *imageRepository) addBannerBearer(r *http.Request) {
-	r.Header.Add("Authorization", "Bearer "+os.Getenv("BANNER_API_TOKEN"))
+	r.Header.Add("Authorization", "Bearer "+os.Getenv(config.BannerApiToken))
 }
 
 func (i *imageRepository) getGenerationBannerURL(chart []float64, rate *domain.CurrencyRate) (string, error) {
@@ -37,7 +39,7 @@ func (i *imageRepository) getGenerationBannerURL(chart []float64, rate *domain.C
 	}
 
 	req, err := http.NewRequest("POST",
-		os.Getenv("BANNER_API_URL"),
+		os.Getenv(config.BannerApiUrl),
 		bytes.NewBuffer(reqBody),
 	)
 	if err != nil {
@@ -59,7 +61,7 @@ func (i *imageRepository) getGenerationBannerURL(chart []float64, rate *domain.C
 
 func (i *imageRepository) getBannerRequestBody(chart []float64, rate *domain.CurrencyRate) ([]byte, error) {
 	return json.Marshal(&domain.BannerRequest{
-		Template:    os.Getenv("CRYPTO_TEMPLATE"),
+		Template:    os.Getenv(config.CryptoBannerTemplate),
 		Transparent: false,
 		WebHookUrl:  nil,
 		Metadata:    nil,
@@ -103,7 +105,7 @@ func (i *imageRepository) waitAndExtractBannerURL(imageURL string) (string, erro
 		time.Sleep(time.Second)
 		jpgUrl, err = i.extractBannerURL(imageURL)
 		if err != nil {
-			fmt.Println(err.Error())
+			log.Println(err.Error())
 			return "", err
 		}
 	}

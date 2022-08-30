@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"genesis_test_case/src/config"
 	"genesis_test_case/src/pkg/types/filemodes"
 	"log"
 	"net/http"
@@ -16,18 +17,18 @@ import (
 	"google.golang.org/api/option"
 )
 
-func getClient(config *oauth2.Config) *http.Client {
-	tokFile := os.Getenv("GMAIL_TOKEN_PATH")
+func getClient(authConfig *oauth2.Config) *http.Client {
+	tokFile := os.Getenv(config.GmailTokenPath)
 	tok, err := tokenFromFile(tokFile)
 	if err != nil {
-		saveToken(tokFile, getTokenFromWeb(config))
+		saveToken(tokFile, getTokenFromWeb(authConfig))
 	}
-	return config.Client(context.Background(), tok)
+	return authConfig.Client(context.Background(), tok)
 }
 
-func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
-	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
-	fmt.Printf("Go to the following link in your browser then type the "+
+func getTokenFromWeb(authConfig *oauth2.Config) *oauth2.Token {
+	authURL := authConfig.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
+	log.Printf("Go to the following link in your browser then type the "+
 		"authorization code: \n%v\n", authURL)
 
 	var authCode string
@@ -35,7 +36,7 @@ func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
 		log.Fatalf("Unable to read authorization code: %v", err)
 	}
 
-	tok, err := config.Exchange(context.TODO(), authCode, oauth2.AccessTypeOffline)
+	tok, err := authConfig.Exchange(context.TODO(), authCode, oauth2.AccessTypeOffline)
 	if err != nil {
 		log.Fatalf("Unable to retrieve token from web: %v", err)
 	}
@@ -58,7 +59,7 @@ func tokenFromFile(file string) (*oauth2.Token, error) {
 }
 
 func saveToken(path string, token *oauth2.Token) {
-	fmt.Printf("Saving credential file to: %s\n", path)
+	log.Printf("Saving credential file to: %s\n", path)
 	tokenFileMode := os.ModeDir | filemodes.OS_USER_RW
 	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, tokenFileMode)
 	if err != nil {
@@ -111,12 +112,17 @@ func getClientFromFile(path string) (*oauth2.Config, error) {
 }
 
 func GetGmailService() (*gmail.Service, error) {
-	config, err := getClientFromFile(os.Getenv("GMAIL_CREDENTIALS_PATH"))
+	gmailConfig, err := getClientFromFile(
+		os.Getenv(config.GmailCredentialsPath),
+	)
 	if err != nil {
 		return nil, err
 	}
 
-	srv, err := gmail.NewService(context.Background(), option.WithHTTPClient(getClient(config)))
+	srv, err := gmail.NewService(
+		context.Background(),
+		option.WithHTTPClient(getClient(gmailConfig)),
+	)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to retrieve Gmail client")
 	}
