@@ -2,6 +2,7 @@ package http
 
 import (
 	"errors"
+	"genesis_test_case/src/pkg/delivery/http/responses"
 	"genesis_test_case/src/pkg/domain"
 	myerr "genesis_test_case/src/pkg/types/errors"
 	"genesis_test_case/src/pkg/usecase"
@@ -27,9 +28,11 @@ func (m *MailingHandler) SendRate(c *fiber.Ctx) error {
 	}
 
 	if len(unsent) > 0 {
-		return c.JSON(fiber.Map{
-			"unsent": unsent,
-		})
+		return c.JSON(
+			responses.SendRateResponseHTTP{
+				UnsentEmails: unsent,
+			},
+		)
 	}
 
 	return c.SendStatus(fiber.StatusOK)
@@ -38,9 +41,9 @@ func (m *MailingHandler) SendRate(c *fiber.Ctx) error {
 func (m *MailingHandler) Subscribe(c *fiber.Ctx) error {
 	recipient := new(domain.Recipient)
 
-	msg, err := utils.ParseAndValidate(c, recipient)
+	errMsg, err := utils.ParseAndValidate(c, recipient)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(msg)
+		return c.Status(fiber.StatusBadRequest).JSON(errMsg)
 	}
 
 	err = m.usecases.Mailing.Subscribe(recipient)
@@ -48,10 +51,12 @@ func (m *MailingHandler) Subscribe(c *fiber.Ctx) error {
 		if errors.Is(err, myerr.ErrAlreadyExists) {
 			return c.SendStatus(fiber.StatusConflict)
 		}
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": true,
-			"msg":   err.Error(),
-		})
+		return c.Status(fiber.StatusInternalServerError).JSON(
+			responses.ErrorResponseHTTP{
+				Error:   true,
+				Message: err.Error(),
+			},
+		)
 	}
 
 	return c.SendStatus(fiber.StatusOK)
