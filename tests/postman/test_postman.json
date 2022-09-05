@@ -1,0 +1,234 @@
+{
+	"info": {
+		"_postman_id": "d70875e1-e6b5-4ee8-843a-beadb81347ab",
+		"name": "Crypto Mailer API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19076893"
+	},
+	"item": [
+		{
+			"name": "Get current rate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "localhost:8000/rate",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"rate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Subscribe no email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/subscribe",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"subscribe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Subscribe invalid email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "novalid",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8000/subscribe",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"subscribe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Subscribe",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "testgenesismail@gmail.com",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8000/subscribe",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"subscribe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Subscribe duplicate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 409\", function () {\r",
+							"    pm.response.to.have.status(409);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "testgenesismail@gmail.com",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8000/subscribe",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"subscribe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send emails",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/sendEmails",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"sendEmails"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

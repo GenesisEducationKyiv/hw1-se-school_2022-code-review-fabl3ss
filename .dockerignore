@@ -1,0 +1,7 @@
+**/tests
+**/bin
+Dockerfile
+.dockerignore
+.gitignore
+.golangci.toml
+README.md
