@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"genesis_test_case/src/pkg/delivery/http/responses"
+	"genesis_test_case/src/pkg/types/errors"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -25,19 +26,32 @@ func validatorErrors(err error) string {
 	return errorMessage.String()
 }
 
+func ValidateStruct(payload interface{}) (string, error) {
+	if payload == nil {
+		return "unable to validate",
+			errors.ErrNoDataProvided
+	}
+	err := myValidator.Struct(payload)
+	if err != nil {
+		return validatorErrors(err),
+			errors.ErrValidationFailed
+	}
+	return "", nil
+}
+
 func ParseAndValidate(c *fiber.Ctx, payload interface{}) (*responses.ErrorResponseHTTP, error) {
 	if err := c.BodyParser(payload); err != nil {
 		return &responses.ErrorResponseHTTP{
 			Error:   true,
 			Message: err.Error(),
-		}, err
-	}
-	if err := myValidator.Struct(payload); err != nil {
-		return &responses.ErrorResponseHTTP{
-			Error:   true,
-			Message: validatorErrors(err),
-		}, err
+		}, errors.ErrFailedParseHttpBody
 	}
 
+	if msg, err := ValidateStruct(payload); err != nil {
+		return &responses.ErrorResponseHTTP{
+			Error:   true,
+			Message: msg,
+		}, err
+	}
 	return nil, nil
 }

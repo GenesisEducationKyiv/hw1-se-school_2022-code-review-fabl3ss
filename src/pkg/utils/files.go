@@ -2,12 +2,16 @@ package utils
 
 import (
 	"encoding/csv"
+	myerr "genesis_test_case/src/pkg/types/errors"
 	"genesis_test_case/src/pkg/types/filemodes"
 	"io"
 	"os"
 )
 
 func WriteToCsv(path string, data []string) error {
+	if path == "" || len(data) < 1 {
+		return myerr.ErrInvalidInput
+	}
 	fileMode := os.ModeDir | (filemodes.OS_USER_RW | filemodes.OS_ALL_R)
 	f, err := os.OpenFile(
 		path,

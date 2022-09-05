@@ -4,6 +4,8 @@ import (
 	"genesis_test_case/src/config"
 	"genesis_test_case/src/pkg/domain"
 	"genesis_test_case/src/pkg/repository"
+
+	myerr "genesis_test_case/src/pkg/types/errors"
 )
 
 type mailingUsecase struct {
@@ -17,11 +19,13 @@ func NewMailingUsecase(r *repository.Repositories) domain.MailingUsecase {
 }
 
 func (m *mailingUsecase) Subscribe(recipient *domain.Recipient) error {
+	if recipient == nil {
+		return myerr.ErrNoDataProvided
+	}
 	subscribed, err := m.repos.Mailing.GetSubscribed()
 	if err != nil {
 		return err
 	}
-
 	err = m.repos.Mailing.InsertNewEmail(subscribed, recipient.Email)
 	if err != nil {
 		return err

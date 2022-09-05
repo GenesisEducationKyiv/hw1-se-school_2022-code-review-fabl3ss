@@ -39,6 +39,19 @@ Therefore, if the API stopped working for some reason, first try to set up the [
   make lint-fast --> to execute only fast linters
 ```
 
+## Tests
+``` Module and Integration ```
+```bash
+  make test      --> to execute tests once
+  make test100   --> to execute tests 100 times
+  make cover     --> to see tests coverage in html
+```
+
+``` End-to-end ```
+```bash
+  1. Import tests/postman/test_postman.json into postman
+  2. Run collection
+```
 
 ## Project structure
 ``` bash

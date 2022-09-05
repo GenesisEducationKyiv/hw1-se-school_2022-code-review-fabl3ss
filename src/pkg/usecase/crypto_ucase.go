@@ -18,8 +18,7 @@ func NewCryptoUsecase(r *repository.Repositories) domain.CryptoUsecase {
 	}
 }
 
-func (c *cryptoUsecase) GetConfigCurrencyRate() (int, error) {
-	cfg := config.Get()
+func (c *cryptoUsecase) GetConfigCurrencyRate(cfg *config.Config) (int, error) {
 	rate, err := c.repos.Crypto.GetCurrencyRate(cfg.BaseCurrency, cfg.QuoteCurrency)
 	if err != nil {
 		return 0, err

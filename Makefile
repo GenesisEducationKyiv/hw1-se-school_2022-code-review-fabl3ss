@@ -5,6 +5,18 @@ PATH := $(PROJECT_BIN):$(PATH)
 
 GOLANGCI_LINT = $(PROJECT_BIN)/golangci-lint
 
+test:
+	go test -v -count=1 ./...
+
+test100:
+	go test -v -count=100 ./...
+
+.PHONY: cover
+cover:
+	go test -short -count=1 -race -coverprofile=coverage.out ./...
+	go tool cover -html=coverage.out
+	rm coverage.out
+
 .PHONY: .install-linter
 .install-linter:
 	### INSTALL GOLANGCI-LINT ###
@@ -18,3 +30,15 @@ lint: .install-linter
 .PHONY: lint-fast
 lint-fast: .install-linter
 	$(GOLANGCI_LINT) run ./... --fast --config=./.golangci.toml
+
+.PHONY: cover
+cover:
+	go test -short -count=1 -race -coverprofile=coverage.out ./...
+	go tool cover -html=coverage.out
+	rm coverage.out
+
+.PHONY: gen-mocks 
+gen-mocks:
+	mockgen -source=src/pkg/domain/emails.go \
+		-destination=src/pkg/domain/mocks/MailingRepository.go \
+		MailingRepository

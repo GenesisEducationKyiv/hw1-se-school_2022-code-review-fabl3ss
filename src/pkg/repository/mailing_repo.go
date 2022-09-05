@@ -10,6 +10,7 @@ import (
 
 	"genesis_test_case/src/config"
 	"genesis_test_case/src/pkg/domain"
+	myerr "genesis_test_case/src/pkg/types/errors"
 	"genesis_test_case/src/pkg/utils"
 	"genesis_test_case/src/platform/gmail_api"
 
@@ -47,6 +48,9 @@ func (m *mailingRepository) GetSubscribed() ([]string, error) {
 	subscribed, err := utils.ReadAllFromCsv(cfg.StorageFile)
 	if err != nil {
 		return nil, err
+	}
+	if len(subscribed) < 1 {
+		return nil, myerr.ErrNoSubscribers
 	}
 
 	return subscribed, nil
