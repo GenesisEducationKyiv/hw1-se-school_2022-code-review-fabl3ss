@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	"errors"
 	"genesis_test_case/src/pkg/domain"
 	mocks "genesis_test_case/src/pkg/domain/mocks"
 	"genesis_test_case/src/pkg/repository"
@@ -51,9 +50,9 @@ func TestSubscribeError(t *testing.T) {
 	err := mailingUcase.Subscribe(nil)
 	require.EqualError(t, err, myerr.ErrNoDataProvided.Error())
 
-	mockMailingRepo.EXPECT().GetSubscribed().Return(nil, errors.New("error!"))
+	mockMailingRepo.EXPECT().GetSubscribed().Return(nil, myerr.ErrNoSubscribers)
 	err = mailingUcase.Subscribe(recipient)
-	require.Error(t, err)
+	require.EqualError(t, err, myerr.ErrNoSubscribers.Error())
 
 	mockMailingRepo.EXPECT().GetSubscribed().Return(mockMailingResp, nil)
 	mockMailingRepo.EXPECT().InsertNewEmail(mockMailingResp, recipient.Email).Return(myerr.ErrAlreadyExists)
@@ -100,7 +99,7 @@ func TestSendCurrencyRateError(t *testing.T) {
 	}
 	mailingUcase := NewMailingUsecase(u)
 
-	mockCryptoRepo.EXPECT().GetWeekChart().Return(nil, errors.New("error!"))
+	mockCryptoRepo.EXPECT().GetWeekChart().Return(nil)
 	_, err := mailingUcase.SendCurrencyRate()
 	require.Error(t, err)
 }

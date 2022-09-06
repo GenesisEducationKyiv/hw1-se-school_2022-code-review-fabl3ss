@@ -19,6 +19,7 @@ func TestWriteToCsv(t *testing.T) {
 	err := WriteToCsv(testPath, testData)
 	require.NoError(t, err)
 	err = os.Remove(testPath)
+	require.NoError(t, err)
 }
 
 func TestWriteToCsvError(t *testing.T) {
