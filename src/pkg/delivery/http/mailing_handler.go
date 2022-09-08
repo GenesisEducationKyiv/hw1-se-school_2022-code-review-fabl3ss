@@ -2,6 +2,7 @@ package http
 
 import (
 	"errors"
+	"genesis_test_case/src/config"
 	"genesis_test_case/src/pkg/delivery/http/responses"
 	"genesis_test_case/src/pkg/domain"
 	myerr "genesis_test_case/src/pkg/types/errors"
@@ -63,7 +64,7 @@ func (m *MailingHandler) Subscribe(c *fiber.Ctx) error {
 }
 
 func (m *MailingHandler) GetCurrencyRate(c *fiber.Ctx) error {
-	rate, err := m.usecases.Crypto.GetConfigCurrencyRate()
+	rate, err := m.usecases.Crypto.GetConfigCurrencyRate(config.Get())
 	if err != nil {
 		return c.SendStatus(fiber.StatusBadRequest)
 	}
