@@ -21,7 +21,8 @@ type coinbaseExchangerResponse struct {
 }
 
 func (c *coinbaseCurrencyRate) toDefaultRate() (*domain.CurrencyRate, error) {
-	floatPrice, err := strconv.ParseFloat(c.Amount, 64)
+	bitSize := 64
+	floatPrice, err := strconv.ParseFloat(c.Amount, bitSize)
 	if err != nil {
 		return nil, err
 	}

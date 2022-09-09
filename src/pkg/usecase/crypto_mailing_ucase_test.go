@@ -1,10 +1,10 @@
 package usecase
 
 import (
-	"errors"
 	"genesis_test_case/src/config"
 	"genesis_test_case/src/pkg/domain"
 	mocks "genesis_test_case/src/pkg/domain/mocks"
+	"genesis_test_case/src/pkg/types/errors"
 	"os"
 	"testing"
 
@@ -82,8 +82,7 @@ func TestSendCurrencyRateError(t *testing.T) {
 		&mockRepos,
 	)
 
-	testError := errors.New("test")
-	exchanger.EXPECT().GetWeekAverageChart(BTCUAHPair).Return(nil, testError)
+	exchanger.EXPECT().GetWeekAverageChart(BTCUAHPair).Return(nil, errors.ErrFailedParseHttpBody)
 	_, err := mailingUsecase.SendCurrencyRate()
 	require.Error(t, err)
 }
