@@ -33,12 +33,6 @@ func TestInsertToSortedError(t *testing.T) {
 		expErr      error
 	}{
 		{
-			name:        "empty_slice",
-			inputSlice:  nil,
-			inputToFind: "qwerty",
-			expErr:      errors.ErrInvalidInput,
-		},
-		{
 			name:        "duplicate",
 			inputSlice:  []string{"apple", "ball"},
 			inputToFind: "ball",

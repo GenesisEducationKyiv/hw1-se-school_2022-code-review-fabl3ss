@@ -1,6 +1,7 @@
 package config
 
 import (
+	"os"
 	"strconv"
 	"time"
 
@@ -8,7 +9,7 @@ import (
 )
 
 func FiberConfig() fiber.Config {
-	readTimeoutSecondsCount, _ := strconv.Atoi(cfg.ServerReadTimeout)
+	readTimeoutSecondsCount, _ := strconv.Atoi(os.Getenv(EnvServerReadTimeout))
 
 	return fiber.Config{
 		ReadTimeout: time.Second * time.Duration(readTimeoutSecondsCount),

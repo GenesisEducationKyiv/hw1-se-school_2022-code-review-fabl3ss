@@ -1,9 +1,11 @@
 package utils
 
 import (
+	"bytes"
 	"encoding/csv"
 	myerr "genesis_test_case/src/pkg/types/errors"
 	"genesis_test_case/src/pkg/types/filemodes"
+	"html/template"
 	"io"
 	"os"
 )
@@ -75,4 +77,19 @@ func csvFileToSlice(f *os.File) ([]string, error) {
 	}
 
 	return data, nil
+}
+
+func ParseHtmlTemplate(path string, templateVars any) (*bytes.Buffer, error) {
+	var htmlContent bytes.Buffer
+
+	t, err := template.ParseFiles(path)
+	if err != nil {
+		return nil, err
+	}
+	err = t.Execute(&htmlContent, templateVars)
+	if err != nil {
+		return nil, err
+	}
+
+	return &htmlContent, nil
 }

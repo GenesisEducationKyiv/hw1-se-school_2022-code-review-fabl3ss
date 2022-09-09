@@ -72,24 +72,35 @@ Therefore, if the API stopped working for some reason, first try to set up the [
 │   ├── cmd
 │   │   └── main.go
 │   ├── config
-│   │   ├── config.go
+│   │   ├── config_integration_test.go
+│   │   ├── env_names.go
 │   │   └── fiber_config.go
 │   ├── pkg
 │   │   ├── delivery
 │   │   │   └── http
-│   │   │       ├── error_response.go
+│   │   │       ├── contracts.go
 │   │   │       ├── mailing_handler.go
-│   │   │       └── middleware
-│   │   │           └── fiber_middleware.go
+│   │   │       ├── middleware
+│   │   │       │   └── fiber_middleware.go
+│   │   │       └── responses
+│   │   │           └── http_responses.go
 │   │   ├── domain
 │   │   │   ├── crypto.go
 │   │   │   ├── emails.go
-│   │   │   └── images.go
+│   │   │   └── mocks
+│   │   │       └── mockRepositories.go
 │   │   ├── repository
-│   │   │   ├── crypto_repo.go
-│   │   │   ├── image_repo.go
-│   │   │   ├── mailing_repo.go
-│   │   │   └── repo.go
+│   │   │   ├── crypto
+│   │   │   │   ├── banners
+│   │   │   │   │   ├── crypto_bannerbear.go
+│   │   │   │   │   └── crypto_bannerbear_integration_test.go
+│   │   │   │   └── exchangers
+│   │   │   │       ├── crypto_coinbase.go
+│   │   │   │       └── crypto_coinbase_integration_test.go
+│   │   │   ├── mailing
+│   │   │   │   └── mailing_gmail.go
+│   │   │   └── storage
+│   │   │       └── csv_email_storage.go
 │   │   ├── routes
 │   │   │   ├── init.go
 │   │   │   └── routes.go
@@ -99,20 +110,29 @@ Therefore, if the API stopped working for some reason, first try to set up the [
 │   │   │   └── filemodes
 │   │   │       └── filemodes.go
 │   │   ├── usecase
-│   │   │   ├── crypto_ucase.go
-│   │   │   ├── mailing_ucase.go
-│   │   │   └── usecases.go
+│   │   │   ├── contracts.go
+│   │   │   ├── crypto_exchange_ucase.go
+│   │   │   ├── crypto_exchange_ucase_test.go
+│   │   │   ├── crypto_mailing_ucase.go
+│   │   │   ├── crypto_mailing_ucase_test.go
+│   │   │   ├── subscription_ucase.go
+│   │   │   └── subscription_ucase_test.go
 │   │   └── utils
 │   │       ├── files.go
+│   │       ├── files_test.go
 │   │       ├── http.go
 │   │       ├── slices.go
+│   │       ├── slices_test.go
 │   │       ├── start-server.go
-│   │       └── validator.go
+│   │       ├── validator.go
+│   │       └── validator_test.go
 │   └── platform
 │       ├── csv
-│       │   └── data.csv
-│       └── gmail_api
-│           └── gmail_api.go
+│       │   ├── data.csv
+│       │   └── test.csv
+│       ├── gmail_api
+│       │   └── gmail_api.go
+│       └── storage
 ├── static
 │   └── crypto-message.html
 └── tests
