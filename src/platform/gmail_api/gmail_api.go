@@ -18,7 +18,7 @@ import (
 )
 
 func getClient(authConfig *oauth2.Config) *http.Client {
-	tokFile := os.Getenv(config.GmailTokenPath)
+	tokFile := os.Getenv(config.EnvGmailTokenPath)
 	tok, err := tokenFromFile(tokFile)
 	if err != nil {
 		saveToken(tokFile, getTokenFromWeb(authConfig))
@@ -113,7 +113,7 @@ func getClientFromFile(path string) (*oauth2.Config, error) {
 
 func GetGmailService() (*gmail.Service, error) {
 	gmailConfig, err := getClientFromFile(
-		os.Getenv(config.GmailCredentialsPath),
+		os.Getenv(config.EnvGmailCredentialsPath),
 	)
 	if err != nil {
 		return nil, err

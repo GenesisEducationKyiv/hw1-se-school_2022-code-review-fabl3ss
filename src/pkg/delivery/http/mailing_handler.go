@@ -2,21 +2,25 @@ package http
 
 import (
 	"errors"
-	"genesis_test_case/src/config"
 	"genesis_test_case/src/pkg/delivery/http/responses"
 	"genesis_test_case/src/pkg/domain"
 	myerr "genesis_test_case/src/pkg/types/errors"
-	"genesis_test_case/src/pkg/usecase"
 	"genesis_test_case/src/pkg/utils"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-type MailingHandler struct {
-	usecases *usecase.Usecases
+type CryptoMailingUsecases struct {
+	Exchange     CryptoExchangerUsecase
+	Mailing      CryptoMailingUsecase
+	Subscription SubscriptionUsecase
 }
 
-func NewMailingHandler(u *usecase.Usecases) *MailingHandler {
+type MailingHandler struct {
+	usecases *CryptoMailingUsecases
+}
+
+func NewMailingHandler(u *CryptoMailingUsecases) *MailingHandler {
 	return &MailingHandler{
 		usecases: u,
 	}
@@ -47,7 +51,7 @@ func (m *MailingHandler) Subscribe(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(errMsg)
 	}
 
-	err = m.usecases.Mailing.Subscribe(recipient)
+	err = m.usecases.Subscription.Subscribe(recipient)
 	if err != nil {
 		if errors.Is(err, myerr.ErrAlreadyExists) {
 			return c.SendStatus(fiber.StatusConflict)
@@ -64,7 +68,7 @@ func (m *MailingHandler) Subscribe(c *fiber.Ctx) error {
 }
 
 func (m *MailingHandler) GetCurrencyRate(c *fiber.Ctx) error {
-	rate, err := m.usecases.Crypto.GetConfigCurrencyRate(config.Get())
+	rate, err := m.usecases.Exchange.GetCurrentExchangePrice()
 	if err != nil {
 		return c.SendStatus(fiber.StatusBadRequest)
 	}
