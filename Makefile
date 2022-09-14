@@ -11,12 +11,6 @@ test:
 test100:
 	go test -v -count=100 ./...
 
-.PHONY: cover
-cover:
-	go test -short -count=1 -race -coverprofile=coverage.out ./...
-	go tool cover -html=coverage.out
-	rm coverage.out
-
 .PHONY: .install-linter
 .install-linter:
 	### INSTALL GOLANGCI-LINT ###

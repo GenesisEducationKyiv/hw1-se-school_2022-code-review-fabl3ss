@@ -20,6 +20,16 @@ type CryptoBannerRepository interface {
 	GetCryptoBannerUrl(chart []float64, rate *domain.CurrencyRate) (string, error)
 }
 
+type Cache interface {
+	GetCache(key string) ([]byte, error)
+	SetCache(key string, value interface{}) error
+}
+
+type CryptoCache interface {
+	SetCurrencyCache(key string, rate *domain.CurrencyRate) error
+	GetCurrencyCache(key string) (*domain.CurrencyRate, error)
+}
+
 type Repositories struct {
 	Banner    CryptoBannerRepository
 	Exchanger CryptoRepository
