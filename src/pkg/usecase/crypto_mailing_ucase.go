@@ -51,7 +51,7 @@ func (c *cryptoMailingUsecase) sendToSubscribed(message *domain.EmailMessage) ([
 }
 
 func (c *cryptoMailingUsecase) getMailingBannerUrl() (string, error) {
-	chart, err := c.repos.Exchanger.GetWeekAverageChart(c.pair)
+	chart, err := c.repos.Chart.GetWeekAverageChart(c.pair)
 	if err != nil {
 		return "", err
 	}

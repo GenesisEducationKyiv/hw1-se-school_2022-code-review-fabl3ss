@@ -1,0 +1,1 @@
+{"level":"info","ts":"2022-09-16T02:42:36.514+0300","caller":"crypto/crypto_logger.go:20","msg":"recieved rate","provider":"coinApiExchangeProvider","price":789057.3069086993,"base":"BTC","quote":"UAH"}

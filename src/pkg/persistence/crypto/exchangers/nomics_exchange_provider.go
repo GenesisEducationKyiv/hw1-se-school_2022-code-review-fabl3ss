@@ -31,7 +31,7 @@ func (c *nomicsExchangerResponse) toDefaultRate(quote string) (*domain.CurrencyR
 
 type NomicsProviderFactory struct{}
 
-func (factory NomicsProviderFactory) CreateRateService() usecase.ExchangeProviderNode {
+func (factory NomicsProviderFactory) CreateRateService() usecase.ExchangeProvider {
 	return &nomicsExchangeProvider{
 		exchangeTemplateUrl: "https://api.nomics.com/v1/currencies/ticker?key=%v&ids=%v&interval=1d&convert=%v",
 		apiKey:              os.Getenv(config.EnvNomicsApiKey),
@@ -41,27 +41,9 @@ func (factory NomicsProviderFactory) CreateRateService() usecase.ExchangeProvide
 type nomicsExchangeProvider struct {
 	exchangeTemplateUrl string
 	apiKey              string
-	next                usecase.ExchangeProviderNode
-}
-
-func (*nomicsExchangeProvider) GetWeekAverageChart(pair *domain.CurrencyPair) ([]float64, error) {
-	panic("unimplemented")
-}
-
-func (n *nomicsExchangeProvider) SetNext(service usecase.ExchangeProviderNode) {
-	n.next = service
 }
 
 func (n *nomicsExchangeProvider) GetCurrencyRate(pair *domain.CurrencyPair) (*domain.CurrencyRate, error) {
-	rate, err := n.getExchangeRate(pair)
-	if err != nil && n.next != nil {
-		return (n.next).GetCurrencyRate(pair)
-	}
-
-	return rate, err
-}
-
-func (n *nomicsExchangeProvider) getExchangeRate(pair *domain.CurrencyPair) (*domain.CurrencyRate, error) {
 	resp, err := n.makeAPIRequest(pair)
 	if err != nil {
 		return nil, err

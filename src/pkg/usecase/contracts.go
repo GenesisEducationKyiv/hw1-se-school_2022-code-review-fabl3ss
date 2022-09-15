@@ -13,6 +13,9 @@ type EmailStorage interface {
 
 type ExchangeProvider interface {
 	GetCurrencyRate(pair *domain.CurrencyPair) (*domain.CurrencyRate, error)
+}
+
+type ChartProvider interface {
 	GetWeekAverageChart(pair *domain.CurrencyPair) ([]float64, error)
 }
 
@@ -40,9 +43,14 @@ type CryptoCache interface {
 	GetCurrencyCache(key string) (*domain.CurrencyRate, error)
 }
 
+type CryptoLogger interface {
+	LogExchangeRate(provider string, rate *domain.CurrencyRate)
+}
+
 type Repositories struct {
 	Banner    CryptoBannerRepository
 	Exchanger ExchangeProvider
+	Chart     ChartProvider
 	Storage   EmailStorage
 	Mailer    MailingRepository
 }

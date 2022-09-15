@@ -21,4 +21,5 @@ const (
 	CryptoCacheHost           string = "CRYPTO_CACHE_HOST"
 	CryptoCacheDB             string = "CRYPTO_CACHE_DB"
 	CryptoCacheExpiresMins    string = "CRYPTO_CACHE_EXPIRES_MINS"
+	EnvLogPath                string = "DEFAULT_LOG_FILE_PATH"
 )

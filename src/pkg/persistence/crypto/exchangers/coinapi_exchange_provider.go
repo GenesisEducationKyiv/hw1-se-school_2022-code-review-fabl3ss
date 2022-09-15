@@ -29,7 +29,7 @@ func (c *coinAPIExchangerResponse) toDefaultRate() *domain.CurrencyRate {
 
 type CoinApiProviderFactory struct{}
 
-func (factory CoinApiProviderFactory) CreateExchangeProviderNode() usecase.ExchangeProviderNode {
+func (factory CoinApiProviderFactory) CreateExchangeProvider() usecase.ExchangeProvider {
 	return &coinApiExchangeProvider{
 		apiKey:              os.Getenv(config.EnvCoinAPIKey),
 		apiKeyHeader:        "X-CoinAPI-Key",
@@ -41,27 +41,9 @@ type coinApiExchangeProvider struct {
 	apiKey              string
 	apiKeyHeader        string
 	exchangeTemplateUrl string
-	next                usecase.ExchangeProviderNode
-}
-
-func (*coinApiExchangeProvider) GetWeekAverageChart(pair *domain.CurrencyPair) ([]float64, error) {
-	panic("unimplemented")
-}
-
-func (c *coinApiExchangeProvider) SetNext(service usecase.ExchangeProviderNode) {
-	c.next = service
 }
 
 func (c *coinApiExchangeProvider) GetCurrencyRate(pair *domain.CurrencyPair) (*domain.CurrencyRate, error) {
-	rate, err := c.getExchangeRate(pair)
-	if err != nil && c.next != nil {
-		return c.next.GetCurrencyRate(pair)
-	}
-
-	return rate, err
-}
-
-func (c *coinApiExchangeProvider) getExchangeRate(pair *domain.CurrencyPair) (*domain.CurrencyRate, error) {
 	resp, err := c.makeAPIRequest(pair)
 	if err != nil {
 		return nil, err

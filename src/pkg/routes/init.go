@@ -2,11 +2,13 @@ package routes
 
 import (
 	"genesis_test_case/src/config"
+	"genesis_test_case/src/loggers"
 	"genesis_test_case/src/pkg/delivery/http"
 	"genesis_test_case/src/pkg/delivery/http/middleware"
 	"genesis_test_case/src/pkg/domain"
+	"genesis_test_case/src/pkg/persistence/crypto"
 	"genesis_test_case/src/pkg/persistence/crypto/banners"
-	"genesis_test_case/src/pkg/persistence/crypto/cache"
+	"genesis_test_case/src/pkg/persistence/crypto/charts"
 	"genesis_test_case/src/pkg/persistence/crypto/exchangers"
 	"genesis_test_case/src/pkg/persistence/mailing"
 	storage "genesis_test_case/src/pkg/persistence/storage/csv"
@@ -32,11 +34,14 @@ func createRepositories() (*usecase.Repositories, error) {
 		os.Getenv(config.EnvBannerApiUrl),
 		os.Getenv(config.EnvCryptoBannerTemplate),
 	)
-
+	exchangeProvider := exchangers.CoinApiProviderFactory{}.CreateExchangeProvider()
+	chartProvider := charts.CoinbaseProviderFactory{}.CreateChartProvider()
 	return &usecase.Repositories{
-		Banner:  cryptoBannerBearRepository,
-		Storage: csvStorage,
-		Mailer:  mailingGmailRepository,
+		Banner:    cryptoBannerBearRepository,
+		Storage:   csvStorage,
+		Mailer:    mailingGmailRepository,
+		Exchanger: exchangeProvider,
+		Chart:     chartProvider,
 	}, nil
 }
 
@@ -95,16 +100,27 @@ func setupCryptoCache() (usecase.CryptoCache, error) {
 		time.Duration(cacheExpiresMins)*time.Minute,
 	)
 
-	return cache.NewCryptoCache(cacheProvider), nil
+	return crypto.NewCryptoCache(cacheProvider), nil
 }
 
 func getConfiguredExchanger() usecase.ExchangeProvider {
-	coinapiExchangerNode := exchangers.CoinApiProviderFactory{}.CreateExchangeProviderNode()
-	coinbaseExchangerNode := exchangers.CoinbaseProviderFactory{}.CreateExchangeProviderNode()
-	nomicsExchangerNode := exchangers.NomicsProviderFactory{}.CreateRateService()
+	logger := loggers.NewZapLogger(os.Getenv(config.EnvLogPath))
+	cryptoLogger := crypto.NewCryptoLogger(logger)
+
+	coinapiExchanger := exchangers.CoinApiProviderFactory{}.CreateExchangeProvider()
+	coinbaseExchanger := exchangers.CoinbaseProviderFactory{}.CreateExchangeProvider()
+	nomicsExchanger := exchangers.NomicsProviderFactory{}.CreateRateService()
+
+	loggingCoinapiExchanger := exchangers.NewLoggingExchanger(coinapiExchanger, cryptoLogger)
+	loggingCoinbaseExchanger := exchangers.NewLoggingExchanger(coinbaseExchanger, cryptoLogger)
+	loggingNomicsExchanger := exchangers.NewLoggingExchanger(nomicsExchanger, cryptoLogger)
+
+	coinapiExchangerNode := exchangers.NewExchangerNode(loggingCoinapiExchanger)
+	coinbaseExchangerNode := exchangers.NewExchangerNode(loggingCoinbaseExchanger)
+	nomicsExchangerNode := exchangers.NewExchangerNode(loggingNomicsExchanger)
 
 	chain := usecase.NewExchangersChain()
-	if chain.RegisterExchanger(
+	chain.RegisterExchanger(
 		config.CoinAPIExchangerName,
 		coinapiExchangerNode,
 		coinbaseExchangerNode,
