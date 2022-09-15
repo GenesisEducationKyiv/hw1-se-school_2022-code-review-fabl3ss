@@ -10,8 +10,10 @@ type cryptoCache struct {
 	cacheProvider usecase.Cache
 }
 
-func NewCryptoCache() usecase.CryptoCache {
-	return &cryptoCache{}
+func NewCryptoCache(cache usecase.Cache) usecase.CryptoCache {
+	return &cryptoCache{
+		cacheProvider: cache,
+	}
 }
 
 func (c *cryptoCache) GetCurrencyCache(key string) (*domain.CurrencyRate, error) {

@@ -27,6 +27,7 @@ func TestGetConfigCurrencyRate(t *testing.T) {
 	cryptoExchangeUsecase := NewCryptoExchangeUsecase(
 		BTCUAHPair,
 		mockCryptoRepo,
+		nil,
 	)
 
 	mockResp := &domain.CurrencyRate{

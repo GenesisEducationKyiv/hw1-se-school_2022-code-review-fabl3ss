@@ -1,8 +1,10 @@
-package cache
+package redis
 
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	myerr "genesis_test_case/src/pkg/types/errors"
 	"genesis_test_case/src/pkg/usecase"
 	"time"
 
@@ -31,6 +33,9 @@ func getRedisClient(host string, db int) *redis.Client {
 func (r *redisCache) GetCache(key string) ([]byte, error) {
 	val, err := r.client.Get(context.Background(), key).Result()
 	if err != nil {
+		if errors.Is(err, redis.Nil) {
+			return nil, myerr.ErrNoCache
+		}
 		return nil, err
 	}
 

@@ -11,9 +11,19 @@ type EmailStorage interface {
 	AddEmail(email string) error
 }
 
-type CryptoRepository interface {
+type ExchangeProvider interface {
 	GetCurrencyRate(pair *domain.CurrencyPair) (*domain.CurrencyRate, error)
 	GetWeekAverageChart(pair *domain.CurrencyPair) ([]float64, error)
+}
+
+type ExchangeProviderNode interface {
+	ExchangeProvider
+	SetNext(exchanger ExchangeProviderNode)
+}
+
+type ExchangersChain interface {
+	RegisterExchanger(name string, exchanger, next ExchangeProviderNode) error
+	GetExchanger(name string) ExchangeProvider
 }
 
 type CryptoBannerRepository interface {
@@ -32,7 +42,7 @@ type CryptoCache interface {
 
 type Repositories struct {
 	Banner    CryptoBannerRepository
-	Exchanger CryptoRepository
+	Exchanger ExchangeProvider
 	Storage   EmailStorage
 	Mailer    MailingRepository
 }

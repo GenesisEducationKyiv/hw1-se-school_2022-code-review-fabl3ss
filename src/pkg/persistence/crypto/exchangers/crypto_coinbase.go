@@ -21,11 +21,11 @@ type coinbaseExchangerResponse struct {
 }
 
 func (c *coinbaseCurrencyRate) toDefaultRate() (*domain.CurrencyRate, error) {
-	bitSize := 64
-	floatPrice, err := strconv.ParseFloat(c.Amount, bitSize)
+	floatPrice, err := utils.StringToFloat64(c.Amount)
 	if err != nil {
 		return nil, err
 	}
+
 	return &domain.CurrencyRate{
 		Price: floatPrice,
 		CurrencyPair: domain.CurrencyPair{
@@ -43,21 +43,28 @@ type chartProps struct {
 	End         string
 }
 
-type cryptoCoinbaseRepo struct {
-	ExchangeEndpoint string
-	ChartEndpoint    string
-}
+type CoinbaseProviderFactory struct{}
 
-func NewCryptoCoinbaseRepository(exchangeEndpoint string, chartEndpoint string) usecase.CryptoRepository {
-	return &cryptoCoinbaseRepo{
-		ExchangeEndpoint: exchangeEndpoint,
-		ChartEndpoint:    chartEndpoint,
+func (factory CoinbaseProviderFactory) CreateExchangeProviderNode() usecase.ExchangeProviderNode {
+	return &coinbaseExchangeProvider{
+		chartTemplateUrl:    "",
+		exchangeTemplateUrl: "https://rest.coinapi.io/v1/exchangerate/%v/%v",
 	}
 }
 
-func (c *cryptoCoinbaseRepo) GetCurrencyRate(pair *domain.CurrencyPair) (*domain.CurrencyRate, error) {
+type coinbaseExchangeProvider struct {
+	chartTemplateUrl    string
+	exchangeTemplateUrl string
+	next                usecase.ExchangeProviderNode
+}
+
+func (c *coinbaseExchangeProvider) SetNext(service usecase.ExchangeProviderNode) {
+	c.next = service
+}
+
+func (c *coinbaseExchangeProvider) GetCurrencyRate(pair *domain.CurrencyPair) (*domain.CurrencyRate, error) {
 	url := fmt.Sprintf(
-		c.ExchangeEndpoint,
+		c.exchangeTemplateUrl,
 		pair.BaseCurrency,
 		pair.QuoteCurrency,
 	)
@@ -71,7 +78,7 @@ func (c *cryptoCoinbaseRepo) GetCurrencyRate(pair *domain.CurrencyPair) (*domain
 	return rate.toDefaultRate()
 }
 
-func (c *cryptoCoinbaseRepo) GetWeekAverageChart(pair *domain.CurrencyPair) ([]float64, error) {
+func (c *coinbaseExchangeProvider) GetWeekAverageChart(pair *domain.CurrencyPair) ([]float64, error) {
 	var averageCandles []float64
 	weekCandles, err := c.getWeekCandles(pair)
 	if err != nil {
@@ -86,7 +93,7 @@ func (c *cryptoCoinbaseRepo) GetWeekAverageChart(pair *domain.CurrencyPair) ([]f
 	return averageCandles, nil
 }
 
-func (c *cryptoCoinbaseRepo) getWeekCandles(pair *domain.CurrencyPair) ([][]float64, error) {
+func (c *coinbaseExchangeProvider) getWeekCandles(pair *domain.CurrencyPair) ([][]float64, error) {
 	nowUtc := time.Now().UTC()
 	weekCandlesProps := &chartProps{
 		Base:        pair.BaseCurrency,
@@ -104,10 +111,10 @@ func (c *cryptoCoinbaseRepo) getWeekCandles(pair *domain.CurrencyPair) ([][]floa
 	return candles, nil
 }
 
-func (c *cryptoCoinbaseRepo) getChart(candleProps *chartProps) ([][]float64, error) {
+func (c *coinbaseExchangeProvider) getChart(candleProps *chartProps) ([][]float64, error) {
 	var candles [][]float64
 	url := fmt.Sprintf(
-		c.ChartEndpoint,
+		c.chartTemplateUrl,
 		candleProps.Base,
 		candleProps.Granularity,
 		candleProps.Start,

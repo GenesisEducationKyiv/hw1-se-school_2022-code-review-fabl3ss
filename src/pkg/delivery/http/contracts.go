@@ -1,6 +1,8 @@
 package http
 
-import "genesis_test_case/src/pkg/domain"
+import (
+	"genesis_test_case/src/pkg/domain"
+)
 
 type SubscriptionUsecase interface {
 	Subscribe(recipient *domain.Recipient) error

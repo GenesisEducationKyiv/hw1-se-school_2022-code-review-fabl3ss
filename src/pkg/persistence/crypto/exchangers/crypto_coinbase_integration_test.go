@@ -18,7 +18,7 @@ func TestGetCurrencyRate(t *testing.T) {
 	}
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
-	coinbaseRepo := NewCryptoCoinbaseRepository(
+	coinbaseRepo := NewcoinbaseExchangeProvidersitory(
 		os.Getenv(config.EnvCoinbaseApiExchangeUrl),
 		os.Getenv(config.EnvCoinbaseApiCandlesUrl),
 	)
@@ -40,7 +40,7 @@ func TestGetWeekChart(t *testing.T) {
 	}
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
-	coinbaseRepo := NewCryptoCoinbaseRepository(
+	coinbaseRepo := NewcoinbaseExchangeProvidersitory(
 		os.Getenv(config.EnvCoinbaseApiExchangeUrl),
 		os.Getenv(config.EnvCoinbaseApiCandlesUrl),
 	)
