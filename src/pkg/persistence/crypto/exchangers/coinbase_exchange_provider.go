@@ -37,7 +37,7 @@ type CoinbaseProviderFactory struct{}
 
 func (factory CoinbaseProviderFactory) CreateExchangeProvider() usecase.ExchangeProvider {
 	return &coinbaseExchangeProvider{
-		exchangeTemplateUrl: "https://rest.coinapi.io/v1/exchangerate/%v/%v",
+		exchangeTemplateUrl: "https://api.coinbase.com/v2/prices/%s-%s/spot",
 	}
 }
 

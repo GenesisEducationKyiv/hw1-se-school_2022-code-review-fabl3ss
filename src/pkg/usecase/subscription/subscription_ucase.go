@@ -4,13 +4,14 @@ import (
 	"genesis_test_case/src/pkg/delivery/http"
 	"genesis_test_case/src/pkg/domain"
 	myerr "genesis_test_case/src/pkg/types/errors"
+	"genesis_test_case/src/pkg/usecase"
 )
 
 type subscriptionUsecase struct {
-	storage EmailStorage
+	storage usecase.EmailStorage
 }
 
-func NewSubscriptionUsecase(storage EmailStorage) http.SubscriptionUsecase {
+func NewSubscriptionUsecase(storage usecase.EmailStorage) http.SubscriptionUsecase {
 	return &subscriptionUsecase{
 		storage: storage,
 	}

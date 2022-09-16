@@ -2,8 +2,8 @@ package usecase
 
 import (
 	"genesis_test_case/src/pkg/domain"
-	mocks "genesis_test_case/src/pkg/domain/mocks"
 	myerr "genesis_test_case/src/pkg/types/errors"
+	mocks "genesis_test_case/src/pkg/usecase/mocks"
 	"testing"
 
 	"github.com/golang/mock/gomock"

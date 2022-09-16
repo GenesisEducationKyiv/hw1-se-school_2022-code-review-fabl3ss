@@ -3,7 +3,8 @@ package usecase
 import (
 	"genesis_test_case/src/config"
 	"genesis_test_case/src/pkg/domain"
-	mocks "genesis_test_case/src/pkg/domain/mocks"
+	myerr "genesis_test_case/src/pkg/types/errors"
+	mocks "genesis_test_case/src/pkg/usecase/mocks"
 	"os"
 	"testing"
 
@@ -13,12 +14,13 @@ import (
 )
 
 func TestGetConfigCurrencyRate(t *testing.T) {
-	if err := godotenv.Load("../../../.env"); err != nil {
+	if err := godotenv.Load("../../../../.env"); err != nil {
 		t.Error("Error loading .env file")
 	}
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
-	mockCryptoRepo := mocks.NewMockCryptoRepository(ctl)
+	mockExchanger := mocks.NewMockExchangeProvider(ctl)
+	mockCryptoCache := mocks.NewMockCryptoCache(ctl)
 	BTCUAHPair := &domain.CurrencyPair{
 		BaseCurrency:  os.Getenv(config.EnvBaseCurrency),
 		QuoteCurrency: os.Getenv(config.EnvQuoteCurrency),
@@ -26,16 +28,18 @@ func TestGetConfigCurrencyRate(t *testing.T) {
 
 	cryptoExchangeUsecase := NewCryptoExchangeUsecase(
 		BTCUAHPair,
-		mockCryptoRepo,
-		nil,
+		mockExchanger,
+		mockCryptoCache,
 	)
 
 	mockResp := &domain.CurrencyRate{
 		CurrencyPair: *BTCUAHPair,
 		Price:        123.123,
 	}
-
-	mockCryptoRepo.EXPECT().GetCurrencyRate(BTCUAHPair).Return(mockResp, nil)
+	mockCryptoCache.EXPECT().GetCurrencyCache(config.CryptoCacheKey).Return(nil, myerr.ErrNoCache)
+	mockExchanger.EXPECT().GetCurrencyRate(BTCUAHPair).Return(mockResp, nil)
+	mockCryptoCache.EXPECT().SetCurrencyCache(config.CryptoCacheKey, mockResp).Return(nil)
 	_, err := cryptoExchangeUsecase.GetCurrentExchangePrice()
+
 	require.NoError(t, err)
 }

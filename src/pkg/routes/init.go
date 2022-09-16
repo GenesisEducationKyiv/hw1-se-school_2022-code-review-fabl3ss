@@ -14,6 +14,9 @@ import (
 	storage "genesis_test_case/src/pkg/persistence/storage/csv"
 	"genesis_test_case/src/pkg/persistence/storage/redis"
 	"genesis_test_case/src/pkg/usecase"
+	exchangeUsecase "genesis_test_case/src/pkg/usecase/exchange"
+	mailingUsecase "genesis_test_case/src/pkg/usecase/mailing"
+	subscriptionUsecase "genesis_test_case/src/pkg/usecase/subscription"
 	"genesis_test_case/src/platform/gmail_api"
 	"os"
 	"strconv"
@@ -29,15 +32,11 @@ func createRepositories() (*usecase.Repositories, error) {
 	}
 	csvStorage := storage.NewCsvEmaiStorage(os.Getenv(config.EnvStorageFilePath))
 	mailingGmailRepository := mailing.NewGmailRepository(gmailService)
-	cryptoBannerBearRepository := banners.NewCryptoBannerBearRepository(
-		os.Getenv(config.EnvBannerApiToken),
-		os.Getenv(config.EnvBannerApiUrl),
-		os.Getenv(config.EnvCryptoBannerTemplate),
-	)
+	cryptobannerBearProvidersitory := banners.BannerBearProviderFactory{}.CreateBannerProvider()
 	exchangeProvider := exchangers.CoinApiProviderFactory{}.CreateExchangeProvider()
 	chartProvider := charts.CoinbaseProviderFactory{}.CreateChartProvider()
 	return &usecase.Repositories{
-		Banner:    cryptoBannerBearRepository,
+		Banner:    cryptobannerBearProvidersitory,
 		Storage:   csvStorage,
 		Mailer:    mailingGmailRepository,
 		Exchanger: exchangeProvider,
@@ -53,7 +52,7 @@ func setupUsecases(repos *usecase.Repositories) (*http.Usecases, error) {
 		BaseCurrency:  os.Getenv(config.EnvBaseCurrency),
 		QuoteCurrency: os.Getenv(config.EnvQuoteCurrency),
 	}
-	cryptoMailignUsecase := usecase.NewCryptoMailingUsecase(
+	cryptoMailignUsecase := mailingUsecase.NewCryptoMailingUsecase(
 		os.Getenv(config.EnvCryptoHtmlMessagePath),
 		BTCUAHPair,
 		cryptoMailingRepositories,
@@ -66,13 +65,13 @@ func setupUsecases(repos *usecase.Repositories) (*http.Usecases, error) {
 
 	configuredExchanger := getConfiguredExchanger()
 
-	cryptoExchangeUsecase := usecase.NewCryptoExchangeUsecase(
+	cryptoExchangeUsecase := exchangeUsecase.NewCryptoExchangeUsecase(
 		BTCUAHPair,
 		configuredExchanger,
 		cryptoCache,
 	)
 
-	subscriptionUsecase := usecase.NewSubscriptionUsecase(
+	subscriptionUsecase := subscriptionUsecase.NewSubscriptionUsecase(
 		repos.Storage,
 	)
 
@@ -109,7 +108,7 @@ func getConfiguredExchanger() usecase.ExchangeProvider {
 
 	coinapiExchanger := exchangers.CoinApiProviderFactory{}.CreateExchangeProvider()
 	coinbaseExchanger := exchangers.CoinbaseProviderFactory{}.CreateExchangeProvider()
-	nomicsExchanger := exchangers.NomicsProviderFactory{}.CreateRateService()
+	nomicsExchanger := exchangers.NomicsProviderFactory{}.CreateExchangeProvider()
 
 	loggingCoinapiExchanger := exchangers.NewLoggingExchanger(coinapiExchanger, cryptoLogger)
 	loggingCoinbaseExchanger := exchangers.NewLoggingExchanger(coinbaseExchanger, cryptoLogger)
@@ -119,7 +118,7 @@ func getConfiguredExchanger() usecase.ExchangeProvider {
 	coinbaseExchangerNode := exchangers.NewExchangerNode(loggingCoinbaseExchanger)
 	nomicsExchangerNode := exchangers.NewExchangerNode(loggingNomicsExchanger)
 
-	chain := usecase.NewExchangersChain()
+	chain := exchangeUsecase.NewExchangersChain()
 	chain.RegisterExchanger(
 		config.CoinAPIExchangerName,
 		coinapiExchangerNode,

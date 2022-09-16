@@ -31,7 +31,7 @@ func (c *nomicsExchangerResponse) toDefaultRate(quote string) (*domain.CurrencyR
 
 type NomicsProviderFactory struct{}
 
-func (factory NomicsProviderFactory) CreateRateService() usecase.ExchangeProvider {
+func (factory NomicsProviderFactory) CreateExchangeProvider() usecase.ExchangeProvider {
 	return &nomicsExchangeProvider{
 		exchangeTemplateUrl: "https://api.nomics.com/v1/currencies/ticker?key=%v&ids=%v&interval=1d&convert=%v",
 		apiKey:              os.Getenv(config.EnvNomicsApiKey),
@@ -55,7 +55,7 @@ func (n *nomicsExchangeProvider) GetCurrencyRate(pair *domain.CurrencyPair) (*do
 func (n *nomicsExchangeProvider) makeAPIRequest(pair *domain.CurrencyPair) (*nomicsExchangerResponse, error) {
 	url := fmt.Sprintf(
 		n.exchangeTemplateUrl,
-		n.exchangeTemplateUrl,
+		n.apiKey,
 		pair.BaseCurrency,
 		pair.QuoteCurrency,
 	)

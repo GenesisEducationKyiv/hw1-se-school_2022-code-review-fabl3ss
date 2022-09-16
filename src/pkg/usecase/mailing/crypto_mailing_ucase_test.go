@@ -3,8 +3,9 @@ package usecase
 import (
 	"genesis_test_case/src/config"
 	"genesis_test_case/src/pkg/domain"
-	mocks "genesis_test_case/src/pkg/domain/mocks"
 	"genesis_test_case/src/pkg/types/errors"
+	"genesis_test_case/src/pkg/usecase"
+	mocks "genesis_test_case/src/pkg/usecase/mocks"
 	"os"
 	"testing"
 
@@ -14,21 +15,23 @@ import (
 )
 
 func TestSendCurrencyRate(t *testing.T) {
-	if err := godotenv.Load("../../../.env"); err != nil {
+	if err := godotenv.Load("../../../../.env"); err != nil {
 		t.Error("Error loading .env file")
 	}
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
-	banner := mocks.NewMockCryptoBannerRepository(ctl)
-	exchanger := mocks.NewMockCryptoRepository(ctl)
-	storage := mocks.NewMockEmailStorage(ctl)
+	chart := mocks.NewMockChartProvider(ctl)
 	mailer := mocks.NewMockMailingRepository(ctl)
-	mockRepos := &CryptoMailingRepositories{
-		Repositories{
-			Banner:    banner,
-			Exchanger: exchanger,
-			Storage:   storage,
+	banner := mocks.NewMockCryptoBannerProvider(ctl)
+	storage := mocks.NewMockEmailStorage(ctl)
+	exchanger := mocks.NewMockExchangeProvider(ctl)
+	mockRepos := &usecase.CryptoMailingRepositories{
+		Repositories: usecase.Repositories{
+			Chart:     chart,
 			Mailer:    mailer,
+			Banner:    banner,
+			Storage:   storage,
+			Exchanger: exchanger,
 		},
 	}
 	BTCUAHPair := &domain.CurrencyPair{
@@ -37,7 +40,7 @@ func TestSendCurrencyRate(t *testing.T) {
 	}
 
 	mailingUsecase := NewCryptoMailingUsecase(
-		"./../../../"+os.Getenv(config.EnvCryptoHtmlMessagePath),
+		"./../../../../"+os.Getenv(config.EnvCryptoHtmlMessagePath),
 		BTCUAHPair,
 		mockRepos,
 	)
@@ -46,7 +49,7 @@ func TestSendCurrencyRate(t *testing.T) {
 	mockCryptoRateResp := &domain.CurrencyRate{}
 	mockBannerResp := "http://example.com/example"
 
-	exchanger.EXPECT().GetWeekAverageChart(BTCUAHPair).Return(mockCryptoChartResp, nil)
+	chart.EXPECT().GetWeekAverageChart(BTCUAHPair).Return(mockCryptoChartResp, nil)
 	exchanger.EXPECT().GetCurrencyRate(BTCUAHPair).Return(mockCryptoRateResp, nil)
 	banner.EXPECT().GetCryptoBannerUrl(mockCryptoChartResp, mockCryptoRateResp).Return(mockBannerResp, nil)
 	storage.EXPECT().GetAllEmails().Return(mockStorageResp, nil)
@@ -59,16 +62,18 @@ func TestSendCurrencyRate(t *testing.T) {
 func TestSendCurrencyRateError(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
-	banner := mocks.NewMockCryptoBannerRepository(ctl)
-	exchanger := mocks.NewMockCryptoRepository(ctl)
-	storage := mocks.NewMockEmailStorage(ctl)
+	chart := mocks.NewMockChartProvider(ctl)
 	mailer := mocks.NewMockMailingRepository(ctl)
-	mockRepos := CryptoMailingRepositories{
-		Repositories{
-			Banner:    banner,
-			Exchanger: exchanger,
-			Storage:   storage,
+	banner := mocks.NewMockCryptoBannerProvider(ctl)
+	storage := mocks.NewMockEmailStorage(ctl)
+	exchanger := mocks.NewMockExchangeProvider(ctl)
+	mockRepos := usecase.CryptoMailingRepositories{
+		Repositories: usecase.Repositories{
+			Chart:     chart,
 			Mailer:    mailer,
+			Banner:    banner,
+			Storage:   storage,
+			Exchanger: exchanger,
 		},
 	}
 	BTCUAHPair := &domain.CurrencyPair{
@@ -82,7 +87,7 @@ func TestSendCurrencyRateError(t *testing.T) {
 		&mockRepos,
 	)
 
-	exchanger.EXPECT().GetWeekAverageChart(BTCUAHPair).Return(nil, errors.ErrFailedParseHttpBody)
+	chart.EXPECT().GetWeekAverageChart(BTCUAHPair).Return(nil, errors.ErrFailedParseHttpBody)
 	_, err := mailingUsecase.SendCurrencyRate()
 	require.Error(t, err)
 }

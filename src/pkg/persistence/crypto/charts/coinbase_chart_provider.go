@@ -13,7 +13,7 @@ type CoinbaseProviderFactory struct{}
 
 func (factory CoinbaseProviderFactory) CreateChartProvider() usecase.ChartProvider {
 	return &coinbaseChartProvider{
-		chartTemplateUrl: "https://rest.coinapi.io/v1/exchangerate/%v/%v",
+		chartTemplateUrl: "https://api.exchange.coinbase.com/products/%s-USDT/candles?granularity=%s&start=%s&end=%s",
 	}
 }
 

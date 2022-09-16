@@ -33,6 +33,5 @@ cover:
 
 .PHONY: gen-mocks 
 gen-mocks:
-	mockgen -source=src/pkg/domain/emails.go \
-		-destination=src/pkg/domain/mocks/MailingRepository.go \
-		MailingRepository
+	mockgen -source=src/pkg/usecase/contracts.go \
+		-destination=src/pkg/usecase/mocks/persistence_mocks.go 

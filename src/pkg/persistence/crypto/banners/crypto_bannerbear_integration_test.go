@@ -1,9 +1,7 @@
 package banners
 
 import (
-	"genesis_test_case/src/config"
 	"genesis_test_case/src/pkg/domain"
-	"os"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -17,11 +15,7 @@ func TestGetCryptoBannerUrl(t *testing.T) {
 	}
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
-	bannerRepo := NewCryptoBannerBearRepository(
-		os.Getenv(config.EnvBannerApiToken),
-		os.Getenv(config.EnvBannerApiUrl),
-		os.Getenv(config.EnvCryptoBannerTemplate),
-	)
+	bannerRepo := BannerBearProviderFactory{}.CreateBannerProvider()
 	chart := []float64{
 		0.1,
 		0.2,

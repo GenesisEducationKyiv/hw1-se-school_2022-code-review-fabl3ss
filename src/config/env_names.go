@@ -16,7 +16,7 @@ const (
 	EnvCoinbaseApiCandlesUrl  string = "COINBASE_API_CANDLES_URL"
 	EnvCoinAPIKey             string = "COINAPI_API_KEY"
 	EnvNomicsApiKey           string = "NOMICS_API_KEY"
-	EnvCryptoCacheKey         string = "CRYPTO_CACHE_KEY"
+	CryptoCacheKey            string = "CRYPTO_CACHE_KEY"
 	EnvDefaultExchangerName   string = "DEFAULT_EXCHANGER_NAME"
 	CryptoCacheHost           string = "CRYPTO_CACHE_HOST"
 	CryptoCacheDB             string = "CRYPTO_CACHE_DB"

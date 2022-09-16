@@ -21,11 +21,9 @@ func TestConfigGet(t *testing.T) {
 		GmailTokenPath        string = os.Getenv(EnvGmailTokenPath)
 		GmailCredentialsPath  string = os.Getenv(EnvGmailCredentialsPath)
 		BannerApiToken        string = os.Getenv(EnvBannerApiToken)
-		BannerApiUrl          string = os.Getenv(EnvBannerApiUrl)
 		CryptoBannerTemplate  string = os.Getenv(EnvCryptoBannerTemplate)
 		CryptoHtmlMessagePath string = os.Getenv(EnvCryptoHtmlMessagePath)
-		CryptoApiExchangeUrl  string = os.Getenv(EnvCoinbaseApiExchangeUrl)
-		CryptoApiCandlesUrl   string = os.Getenv(EnvCoinbaseApiCandlesUrl)
+		DefaultExchangerName  string = os.Getenv(EnvDefaultExchangerName)
 	)
 
 	require.NotEmpty(t, ServerUrl)
@@ -36,9 +34,7 @@ func TestConfigGet(t *testing.T) {
 	require.NotEmpty(t, GmailTokenPath)
 	require.NotEmpty(t, GmailCredentialsPath)
 	require.NotEmpty(t, BannerApiToken)
-	require.NotEmpty(t, BannerApiUrl)
 	require.NotEmpty(t, CryptoBannerTemplate)
 	require.NotEmpty(t, CryptoHtmlMessagePath)
-	require.NotEmpty(t, CryptoApiExchangeUrl)
-	require.NotEmpty(t, CryptoApiCandlesUrl)
+	require.NotEmpty(t, DefaultExchangerName)
 }

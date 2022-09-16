@@ -29,7 +29,7 @@ type ExchangersChain interface {
 	GetExchanger(name string) ExchangeProvider
 }
 
-type CryptoBannerRepository interface {
+type CryptoBannerProvider interface {
 	GetCryptoBannerUrl(chart []float64, rate *domain.CurrencyRate) (string, error)
 }
 
@@ -48,9 +48,13 @@ type CryptoLogger interface {
 }
 
 type Repositories struct {
-	Banner    CryptoBannerRepository
+	Banner    CryptoBannerProvider
 	Exchanger ExchangeProvider
 	Chart     ChartProvider
 	Storage   EmailStorage
 	Mailer    MailingRepository
+}
+
+type CryptoMailingRepositories struct {
+	Repositories
 }
