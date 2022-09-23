@@ -34,10 +34,10 @@ func TestSendCurrencyRate(t *testing.T) {
 			Exchanger: exchanger,
 		},
 	}
-	BTCUAHPair := &domain.CurrencyPair{
-		BaseCurrency:  os.Getenv(config.EnvBaseCurrency),
-		QuoteCurrency: os.Getenv(config.EnvQuoteCurrency),
-	}
+	BTCUAHPair := domain.NewCurrencyPair(
+		os.Getenv(config.EnvBaseCurrency),
+		os.Getenv(config.EnvQuoteCurrency),
+	)
 
 	mailingUsecase := NewCryptoMailingUsecase(
 		"./../../../../"+os.Getenv(config.EnvCryptoHtmlMessagePath),
@@ -76,10 +76,10 @@ func TestSendCurrencyRateError(t *testing.T) {
 			Exchanger: exchanger,
 		},
 	}
-	BTCUAHPair := &domain.CurrencyPair{
-		BaseCurrency:  os.Getenv(config.EnvBaseCurrency),
-		QuoteCurrency: os.Getenv(config.EnvQuoteCurrency),
-	}
+	BTCUAHPair := domain.NewCurrencyPair(
+		os.Getenv(config.EnvBaseCurrency),
+		os.Getenv(config.EnvQuoteCurrency),
+	)
 
 	mailingUsecase := NewCryptoMailingUsecase(
 		os.Getenv(config.EnvCryptoHtmlMessagePath),

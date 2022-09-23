@@ -1,11 +1,26 @@
 package domain
 
-type CurrencyPair struct {
-	BaseCurrency  string
-	QuoteCurrency string
-}
-
 type CurrencyRate struct {
 	CurrencyPair
 	Price float64
+}
+
+type CurrencyPair struct {
+	baseCurrency  string
+	quoteCurrency string
+}
+
+func NewCurrencyPair(base string, quote string) *CurrencyPair {
+	return &CurrencyPair{
+		baseCurrency:  base,
+		quoteCurrency: quote,
+	}
+}
+
+func (c *CurrencyPair) GetBaseCurrency() string {
+	return c.baseCurrency
+}
+
+func (c *CurrencyPair) GetQuoteCurrency() string {
+	return c.quoteCurrency
 }

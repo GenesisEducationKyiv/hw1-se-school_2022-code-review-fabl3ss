@@ -44,15 +44,15 @@ func createRepositories() (*usecase.Repositories, error) {
 	}, nil
 }
 
-func setupUsecases(repos *usecase.Repositories) (*http.Usecases, error) {
+func createUsecases(repos *usecase.Repositories) (*http.Usecases, error) {
 	cryptoMailingRepositories := &usecase.CryptoMailingRepositories{
 		Repositories: *repos,
 	}
-	BTCUAHPair := &domain.CurrencyPair{
-		BaseCurrency:  os.Getenv(config.EnvBaseCurrency),
-		QuoteCurrency: os.Getenv(config.EnvQuoteCurrency),
-	}
-	cryptoMailignUsecase := mailingUsecase.NewCryptoMailingUsecase(
+	BTCUAHPair := domain.NewCurrencyPair(
+		os.Getenv(config.EnvBaseCurrency),
+		os.Getenv(config.EnvQuoteCurrency),
+	)
+	cryptoMailingBecause := mailingUsecase.NewCryptoMailingUsecase(
 		os.Getenv(config.EnvCryptoHtmlMessagePath),
 		BTCUAHPair,
 		cryptoMailingRepositories,
@@ -66,7 +66,6 @@ func setupUsecases(repos *usecase.Repositories) (*http.Usecases, error) {
 	configuredExchanger := getConfiguredExchanger()
 
 	cryptoExchangeUsecase := exchangeUsecase.NewCryptoExchangeUsecase(
-		BTCUAHPair,
 		configuredExchanger,
 		cryptoCache,
 	)
@@ -77,7 +76,7 @@ func setupUsecases(repos *usecase.Repositories) (*http.Usecases, error) {
 
 	return &http.Usecases{
 		Subscription:    subscriptionUsecase,
-		CryptoMailing:   cryptoMailignUsecase,
+		CryptoMailing:   cryptoMailingBecause,
 		CryptoExchanger: cryptoExchangeUsecase,
 	}, nil
 }
@@ -140,33 +139,37 @@ func getConfiguredExchanger() usecase.ExchangeProvider {
 	)
 }
 
-func initHandler() (*http.MailingHandler, error) {
-	repos, err := createRepositories()
-	if err != nil {
-		return nil, err
-	}
-	usecases, err := setupUsecases(repos)
-	if err != nil {
-		return nil, err
-	}
+func createHandlers(usecases *http.Usecases) (*Handlers, error) {
 	cryptoMailingUsecases := &http.CryptoMailingUsecases{
 		Exchange:     usecases.CryptoExchanger,
 		Mailing:      usecases.CryptoMailing,
 		Subscription: usecases.Subscription,
 	}
-	handler := http.NewMailingHandler(cryptoMailingUsecases)
+	mailingHandler := http.NewMailingHandler(cryptoMailingUsecases)
+	rateHandler := http.NewConfigRateHandler(usecases.CryptoExchanger)
 
-	return handler, nil
+	return &Handlers{
+		Mailing: mailingHandler,
+		Rate:    rateHandler,
+	}, nil
 }
 
 func InitRoutes(app *fiber.App) error {
-	handler, err := initHandler()
+	repos, err := createRepositories()
+	if err != nil {
+		return err
+	}
+	usecases, err := createUsecases(repos)
+	if err != nil {
+		return err
+	}
+	handlers, err := createHandlers(usecases)
 	if err != nil {
 		return err
 	}
 
 	middleware.FiberMiddleware(app)
-	InitPublicRoutes(app, handler)
+	InitPublicRoutes(app, handlers)
 
 	return nil
 }

@@ -47,8 +47,8 @@ func (c *coinbaseChartProvider) GetWeekAverageChart(pair *domain.CurrencyPair) (
 func (c *coinbaseChartProvider) getWeekCandles(pair *domain.CurrencyPair) ([][]float64, error) {
 	nowUtc := time.Now().UTC()
 	weekCandlesProps := &chartProps{
-		Base:        pair.BaseCurrency,
-		Quote:       pair.QuoteCurrency,
+		Base:        pair.GetBaseCurrency(),
+		Quote:       pair.GetQuoteCurrency(),
 		Granularity: strconv.Itoa(int(time.Hour.Seconds())),
 		Start:       nowUtc.AddDate(0, 0, -7).Format(time.RFC3339),
 		End:         nowUtc.Format(time.RFC3339),

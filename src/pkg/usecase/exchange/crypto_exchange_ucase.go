@@ -16,22 +16,20 @@ type CryptoExchangerUsecase struct {
 }
 
 func NewCryptoExchangeUsecase(
-	pair *domain.CurrencyPair,
 	crypto usecase.ExchangeProvider,
 	cache usecase.CryptoCache,
 ) http.CryptoExchangerUsecase {
 	return &CryptoExchangerUsecase{
-		pair:           pair,
 		cryptoProvider: crypto,
 		cache:          cache,
 	}
 }
 
-func (c *CryptoExchangerUsecase) GetCurrentExchangePrice() (float64, error) {
+func (c *CryptoExchangerUsecase) GetCurrentExchangePrice(pair *domain.CurrencyPair) (float64, error) {
 	cacheRate, err := c.cache.GetCurrencyCache(config.CryptoCacheKey)
 	if err != nil {
 		if errors.Is(err, myerr.ErrNoCache) {
-			rate, err := c.cryptoProvider.GetCurrencyRate(c.pair)
+			rate, err := c.cryptoProvider.GetCurrencyRate(pair)
 			if err != nil {
 				return -1, err
 			}

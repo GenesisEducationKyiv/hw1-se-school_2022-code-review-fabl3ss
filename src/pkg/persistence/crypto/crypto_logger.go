@@ -21,7 +21,7 @@ func (c *cryptoLogger) LogExchangeRate(provider string, rate *domain.CurrencyRat
 		"recieved rate",
 		"provider", provider,
 		"price", rate.Price,
-		"base", rate.BaseCurrency,
-		"quote", rate.QuoteCurrency,
+		"base", rate.GetBaseCurrency(),
+		"quote", rate.GetQuoteCurrency(),
 	)
 }

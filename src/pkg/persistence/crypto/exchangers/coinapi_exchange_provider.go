@@ -10,23 +10,6 @@ import (
 	"os"
 )
 
-type coinAPIExchangerResponse struct {
-	Time          string  `json:"time"`
-	BaseCurrency  string  `json:"asset_id_base"`
-	QuoteCurrency string  `json:"asset_id_quote"`
-	Rate          float64 `json:"rate"`
-}
-
-func (c *coinAPIExchangerResponse) toDefaultRate() *domain.CurrencyRate {
-	return &domain.CurrencyRate{
-		Price: c.Rate,
-		CurrencyPair: domain.CurrencyPair{
-			BaseCurrency:  c.BaseCurrency,
-			QuoteCurrency: c.QuoteCurrency,
-		},
-	}
-}
-
 type CoinApiProviderFactory struct{}
 
 func (factory CoinApiProviderFactory) CreateExchangeProvider() usecase.ExchangeProvider {
@@ -55,8 +38,8 @@ func (c *coinApiExchangeProvider) GetCurrencyRate(pair *domain.CurrencyPair) (*d
 func (c *coinApiExchangeProvider) makeAPIRequest(pair *domain.CurrencyPair) (*coinAPIExchangerResponse, error) {
 	url := fmt.Sprintf(
 		c.exchangeTemplateUrl,
-		pair.BaseCurrency,
-		pair.QuoteCurrency,
+		pair.GetBaseCurrency(),
+		pair.GetQuoteCurrency(),
 	)
 
 	req, err := http.NewRequest("GET", url, nil)
@@ -71,4 +54,21 @@ func (c *coinApiExchangeProvider) makeAPIRequest(pair *domain.CurrencyPair) (*co
 	}
 
 	return coinAPIRate, nil
+}
+
+type coinAPIExchangerResponse struct {
+	Time          string  `json:"time"`
+	BaseCurrency  string  `json:"asset_id_base"`
+	QuoteCurrency string  `json:"asset_id_quote"`
+	Rate          float64 `json:"rate"`
+}
+
+func (c *coinAPIExchangerResponse) toDefaultRate() *domain.CurrencyRate {
+	return &domain.CurrencyRate{
+		Price: c.Rate,
+		CurrencyPair: *domain.NewCurrencyPair(
+			c.BaseCurrency,
+			c.QuoteCurrency,
+		),
+	}
 }

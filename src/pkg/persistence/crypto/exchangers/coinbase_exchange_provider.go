@@ -8,31 +8,6 @@ import (
 	"genesis_test_case/src/pkg/utils"
 )
 
-type coinbaseCurrencyRate struct {
-	Amount        string `json:"amount"`
-	BaseCurrency  string `json:"base"`
-	QuoteCurrency string `json:"currency"`
-}
-
-type coinbaseExchangerResponse struct {
-	coinbaseCurrencyRate `json:"data"`
-}
-
-func (c *coinbaseCurrencyRate) toDefaultRate() (*domain.CurrencyRate, error) {
-	floatPrice, err := utils.StringToFloat64(c.Amount)
-	if err != nil {
-		return nil, err
-	}
-
-	return &domain.CurrencyRate{
-		Price: floatPrice,
-		CurrencyPair: domain.CurrencyPair{
-			BaseCurrency:  c.BaseCurrency,
-			QuoteCurrency: c.QuoteCurrency,
-		},
-	}, nil
-}
-
 type CoinbaseProviderFactory struct{}
 
 func (factory CoinbaseProviderFactory) CreateExchangeProvider() usecase.ExchangeProvider {
@@ -57,8 +32,8 @@ func (c *coinbaseExchangeProvider) GetCurrencyRate(pair *domain.CurrencyPair) (*
 func (c *coinbaseExchangeProvider) makeAPIRequest(pair *domain.CurrencyPair) (*coinbaseExchangerResponse, error) {
 	url := fmt.Sprintf(
 		c.exchangeTemplateUrl,
-		pair.BaseCurrency,
-		pair.QuoteCurrency,
+		pair.GetBaseCurrency(),
+		pair.GetQuoteCurrency(),
 	)
 	rate := new(coinbaseExchangerResponse)
 
@@ -68,4 +43,29 @@ func (c *coinbaseExchangeProvider) makeAPIRequest(pair *domain.CurrencyPair) (*c
 	}
 
 	return rate, nil
+}
+
+type coinbaseCurrencyRate struct {
+	Amount        string `json:"amount"`
+	BaseCurrency  string `json:"base"`
+	QuoteCurrency string `json:"currency"`
+}
+
+type coinbaseExchangerResponse struct {
+	coinbaseCurrencyRate `json:"data"`
+}
+
+func (c *coinbaseCurrencyRate) toDefaultRate() (*domain.CurrencyRate, error) {
+	floatPrice, err := utils.StringToFloat64(c.Amount)
+	if err != nil {
+		return nil, err
+	}
+
+	return &domain.CurrencyRate{
+		Price: floatPrice,
+		CurrencyPair: *domain.NewCurrencyPair(
+			c.BaseCurrency,
+			c.QuoteCurrency,
+		),
+	}, nil
 }

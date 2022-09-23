@@ -10,25 +10,6 @@ import (
 	"os"
 )
 
-type nomicsExchangerResponse struct {
-	Symbol string `json:"symbol"`
-	Price  string `json:"price"`
-}
-
-func (c *nomicsExchangerResponse) toDefaultRate(quote string) (*domain.CurrencyRate, error) {
-	floatPrice, err := utils.StringToFloat64(c.Price)
-	if err != nil {
-		return nil, err
-	}
-	return &domain.CurrencyRate{
-		Price: floatPrice,
-		CurrencyPair: domain.CurrencyPair{
-			BaseCurrency:  c.Symbol,
-			QuoteCurrency: quote,
-		},
-	}, nil
-}
-
 type NomicsProviderFactory struct{}
 
 func (factory NomicsProviderFactory) CreateExchangeProvider() usecase.ExchangeProvider {
@@ -49,15 +30,15 @@ func (n *nomicsExchangeProvider) GetCurrencyRate(pair *domain.CurrencyPair) (*do
 		return nil, err
 	}
 
-	return resp.toDefaultRate(pair.QuoteCurrency)
+	return resp.toDefaultRate(pair.GetQuoteCurrency())
 }
 
 func (n *nomicsExchangeProvider) makeAPIRequest(pair *domain.CurrencyPair) (*nomicsExchangerResponse, error) {
 	url := fmt.Sprintf(
 		n.exchangeTemplateUrl,
 		n.apiKey,
-		pair.BaseCurrency,
-		pair.QuoteCurrency,
+		pair.GetBaseCurrency(),
+		pair.GetQuoteCurrency(),
 	)
 
 	req, err := http.NewRequest("GET", url, nil)
@@ -71,4 +52,23 @@ func (n *nomicsExchangeProvider) makeAPIRequest(pair *domain.CurrencyPair) (*nom
 		return nil, err
 	}
 	return &nomicsRate[0], nil
+}
+
+type nomicsExchangerResponse struct {
+	Symbol string `json:"symbol"`
+	Price  string `json:"price"`
+}
+
+func (c *nomicsExchangerResponse) toDefaultRate(quote string) (*domain.CurrencyRate, error) {
+	floatPrice, err := utils.StringToFloat64(c.Price)
+	if err != nil {
+		return nil, err
+	}
+	return &domain.CurrencyRate{
+		Price: floatPrice,
+		CurrencyPair: *domain.NewCurrencyPair(
+			c.Symbol,
+			quote,
+		),
+	}, nil
 }

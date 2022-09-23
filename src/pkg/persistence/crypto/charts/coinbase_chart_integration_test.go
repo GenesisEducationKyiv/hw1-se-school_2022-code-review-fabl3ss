@@ -9,10 +9,10 @@ import (
 
 func TestGetWeekChart(t *testing.T) {
 	coinbaseRepo := CoinbaseProviderFactory{}.CreateChartProvider()
-	pair := &domain.CurrencyPair{
-		BaseCurrency:  "BTC",
-		QuoteCurrency: "UAH",
-	}
+	pair := domain.NewCurrencyPair(
+		"BTC",
+		"UAH",
+	)
 
 	candles, err := coinbaseRepo.GetWeekAverageChart(pair)
 	require.NoError(t, err)

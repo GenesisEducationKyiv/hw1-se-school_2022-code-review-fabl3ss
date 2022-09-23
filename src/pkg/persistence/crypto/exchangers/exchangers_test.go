@@ -9,15 +9,15 @@ import (
 )
 
 func GetCurrencyRateTest(exchanger usecase.ExchangeProvider, t *testing.T) {
-	pair := &domain.CurrencyPair{
-		BaseCurrency:  "BTC",
-		QuoteCurrency: "UAH",
-	}
+	pair := domain.NewCurrencyPair(
+		"BTC",
+		"UAH",
+	)
 
 	rate, err := exchanger.GetCurrencyRate(pair)
 
 	require.NoError(t, err)
-	require.Equal(t, pair.BaseCurrency, rate.BaseCurrency)
-	require.Equal(t, pair.QuoteCurrency, rate.QuoteCurrency)
+	require.Equal(t, pair.GetBaseCurrency(), rate.GetBaseCurrency())
+	require.Equal(t, pair.GetQuoteCurrency(), rate.GetQuoteCurrency())
 	require.NotEmpty(t, rate.Price)
 }

@@ -23,10 +23,10 @@ func TestGetCryptoBannerUrl(t *testing.T) {
 		0.4,
 	}
 	rate := &domain.CurrencyRate{
-		CurrencyPair: domain.CurrencyPair{
-			BaseCurrency:  "BTC",
-			QuoteCurrency: "UAH",
-		},
+		CurrencyPair: *domain.NewCurrencyPair(
+			"BTC",
+			"UAH",
+		),
 		Price: 123.123,
 	}
 

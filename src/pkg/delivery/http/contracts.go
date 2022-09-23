@@ -13,7 +13,7 @@ type CryptoMailingUsecase interface {
 }
 
 type CryptoExchangerUsecase interface {
-	GetCurrentExchangePrice() (float64, error)
+	GetCurrentExchangePrice(pair *domain.CurrencyPair) (float64, error)
 }
 
 type Usecases struct {

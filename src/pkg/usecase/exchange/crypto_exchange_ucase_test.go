@@ -21,13 +21,12 @@ func TestGetConfigCurrencyRate(t *testing.T) {
 	defer ctl.Finish()
 	mockExchanger := mocks.NewMockExchangeProvider(ctl)
 	mockCryptoCache := mocks.NewMockCryptoCache(ctl)
-	BTCUAHPair := &domain.CurrencyPair{
-		BaseCurrency:  os.Getenv(config.EnvBaseCurrency),
-		QuoteCurrency: os.Getenv(config.EnvQuoteCurrency),
-	}
+	BTCUAHPair := domain.NewCurrencyPair(
+		os.Getenv(config.EnvBaseCurrency),
+		os.Getenv(config.EnvQuoteCurrency),
+	)
 
 	cryptoExchangeUsecase := NewCryptoExchangeUsecase(
-		BTCUAHPair,
 		mockExchanger,
 		mockCryptoCache,
 	)
@@ -39,7 +38,7 @@ func TestGetConfigCurrencyRate(t *testing.T) {
 	mockCryptoCache.EXPECT().GetCurrencyCache(config.CryptoCacheKey).Return(nil, myerr.ErrNoCache)
 	mockExchanger.EXPECT().GetCurrencyRate(BTCUAHPair).Return(mockResp, nil)
 	mockCryptoCache.EXPECT().SetCurrencyCache(config.CryptoCacheKey, mockResp).Return(nil)
-	_, err := cryptoExchangeUsecase.GetCurrentExchangePrice()
+	_, err := cryptoExchangeUsecase.GetCurrentExchangePrice(BTCUAHPair)
 
 	require.NoError(t, err)
 }
