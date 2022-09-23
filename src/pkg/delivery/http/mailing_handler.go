@@ -2,7 +2,7 @@ package http
 
 import (
 	"errors"
-	"genesis_test_case/src/pkg/delivery/http/responses"
+	"genesis_test_case/src/pkg/delivery/http/presentation"
 	"genesis_test_case/src/pkg/domain"
 	myerr "genesis_test_case/src/pkg/types/errors"
 	"genesis_test_case/src/pkg/utils"
@@ -17,12 +17,14 @@ type CryptoMailingUsecases struct {
 }
 
 type MailingHandler struct {
-	usecases *CryptoMailingUsecases
+	usecases  *CryptoMailingUsecases
+	presenter ResponsePresenter
 }
 
-func NewMailingHandler(u *CryptoMailingUsecases) *MailingHandler {
+func NewMailingHandler(usecases *CryptoMailingUsecases, presenter ResponsePresenter) *MailingHandler {
 	return &MailingHandler{
-		usecases: u,
+		usecases:  usecases,
+		presenter: presenter,
 	}
 }
 
@@ -33,8 +35,8 @@ func (m *MailingHandler) SendRate(c *fiber.Ctx) error {
 	}
 
 	if len(unsent) > 0 {
-		return c.JSON(
-			responses.SendRateResponseHTTP{
+		return m.presenter.PresentSendRate(c,
+			&presentation.SendRateResponse{
 				UnsentEmails: unsent,
 			},
 		)
@@ -56,8 +58,8 @@ func (m *MailingHandler) Subscribe(c *fiber.Ctx) error {
 		if errors.Is(err, myerr.ErrAlreadyExists) {
 			return c.SendStatus(fiber.StatusConflict)
 		}
-		return c.Status(fiber.StatusInternalServerError).JSON(
-			responses.ErrorResponseHTTP{
+		return m.presenter.PresentError(c,
+			&presentation.ErrorResponse{
 				Error:   true,
 				Message: err.Error(),
 			},

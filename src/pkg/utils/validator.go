@@ -3,7 +3,7 @@ package utils
 import (
 	"bytes"
 	"fmt"
-	"genesis_test_case/src/pkg/delivery/http/responses"
+	"genesis_test_case/src/pkg/delivery/presentation"
 	"genesis_test_case/src/pkg/types/errors"
 
 	"github.com/go-playground/validator/v10"
@@ -39,16 +39,16 @@ func ValidateStruct(payload interface{}) (string, error) {
 	return "", nil
 }
 
-func ParseAndValidate(c *fiber.Ctx, payload interface{}) (*responses.ErrorResponseHTTP, error) {
+func ParseAndValidate(c *fiber.Ctx, payload interface{}) (*presentation.ErrorResponseHTTP, error) {
 	if err := c.BodyParser(payload); err != nil {
-		return &responses.ErrorResponseHTTP{
+		return &presentation.ErrorResponseHTTP{
 			Error:   true,
 			Message: err.Error(),
 		}, errors.ErrFailedParseHttpBody
 	}
 
 	if msg, err := ValidateStruct(payload); err != nil {
-		return &responses.ErrorResponseHTTP{
+		return &presentation.ErrorResponseHTTP{
 			Error:   true,
 			Message: msg,
 		}, err

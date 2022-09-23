@@ -5,6 +5,7 @@ import (
 	"genesis_test_case/src/loggers"
 	"genesis_test_case/src/pkg/delivery/http"
 	"genesis_test_case/src/pkg/delivery/http/middleware"
+	"genesis_test_case/src/pkg/delivery/http/presentation"
 	"genesis_test_case/src/pkg/domain"
 	"genesis_test_case/src/pkg/persistence/crypto"
 	"genesis_test_case/src/pkg/persistence/crypto/banners"
@@ -145,8 +146,9 @@ func createHandlers(usecases *http.Usecases) (*Handlers, error) {
 		Mailing:      usecases.CryptoMailing,
 		Subscription: usecases.Subscription,
 	}
-	mailingHandler := http.NewMailingHandler(cryptoMailingUsecases)
-	rateHandler := http.NewConfigRateHandler(usecases.CryptoExchanger)
+	presenter := presentation.NewPresenterJSON()
+	mailingHandler := http.NewMailingHandler(cryptoMailingUsecases, presenter)
+	rateHandler := http.NewConfigRateHandler(usecases.CryptoExchanger, presenter)
 
 	return &Handlers{
 		Mailing: mailingHandler,
