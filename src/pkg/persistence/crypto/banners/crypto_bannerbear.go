@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
+	"genesis_test_case/src/config"
 	"genesis_test_case/src/pkg/domain"
 	"genesis_test_case/src/pkg/usecase"
 	"genesis_test_case/src/pkg/utils"
@@ -28,21 +30,23 @@ type bannerBearModifications struct {
 	Background interface{} `json:"background"`
 }
 
-type bannerBearRepo struct {
+type bannerBearProvider struct {
 	bearer      string
 	apiEndpoint string
 	templateId  string
 }
 
-func NewCryptoBannerBearRepository(bearer, enpoint, template string) usecase.CryptoBannerRepository {
-	return &bannerBearRepo{
-		bearer:      bearer,
-		apiEndpoint: enpoint,
-		templateId:  template,
+type BannerBearProviderFactory struct{}
+
+func (factory BannerBearProviderFactory) CreateBannerProvider() usecase.CryptoBannerProvider {
+	return &bannerBearProvider{
+		apiEndpoint: "https://api.bannerbear.com/v2/images",
+		bearer:      os.Getenv(config.EnvBannerApiToken),
+		templateId:  os.Getenv(config.EnvCryptoBannerTemplate),
 	}
 }
 
-func (b *bannerBearRepo) GetCryptoBannerUrl(chart []float64, rate *domain.CurrencyRate) (string, error) {
+func (b *bannerBearProvider) GetCryptoBannerUrl(chart []float64, rate *domain.CurrencyRate) (string, error) {
 	generationUrl, err := b.getGenerationBannerURL(chart, rate)
 	if err != nil {
 		return "", err
@@ -50,11 +54,11 @@ func (b *bannerBearRepo) GetCryptoBannerUrl(chart []float64, rate *domain.Curren
 	return b.waitAndExtractBannerURL(generationUrl)
 }
 
-func (b *bannerBearRepo) addBannerBearer(r *http.Request) {
+func (b *bannerBearProvider) addBannerBearer(r *http.Request) {
 	r.Header.Add("Authorization", "Bearer "+b.bearer)
 }
 
-func (b *bannerBearRepo) getGenerationBannerURL(chart []float64, rate *domain.CurrencyRate) (string, error) {
+func (b *bannerBearProvider) getGenerationBannerURL(chart []float64, rate *domain.CurrencyRate) (string, error) {
 	reqBody, err := b.getBannerRequestBody(chart, rate)
 	if err != nil {
 		return "", err
@@ -81,7 +85,7 @@ func (b *bannerBearRepo) getGenerationBannerURL(chart []float64, rate *domain.Cu
 	return generationURL.Self, nil
 }
 
-func (b *bannerBearRepo) getBannerRequestBody(chart []float64, rate *domain.CurrencyRate) ([]byte, error) {
+func (b *bannerBearProvider) getBannerRequestBody(chart []float64, rate *domain.CurrencyRate) ([]byte, error) {
 	return json.Marshal(&bannerBearRequest{
 		Template:    b.templateId,
 		Transparent: false,
@@ -95,17 +99,17 @@ func (b *bannerBearRepo) getBannerRequestBody(chart []float64, rate *domain.Curr
 			{
 				Name: "title",
 				Text: fmt.Sprintf("%s/%s",
-					rate.BaseCurrency,
-					rate.QuoteCurrency,
+					rate.GetBaseCurrency(),
+					rate.GetQuoteCurrency(),
 				),
 				Background: nil,
 			},
 			{
 				Name: "subtitle",
 				Text: fmt.Sprintf("1 %s = %v %s",
-					rate.BaseCurrency,
+					rate.GetBaseCurrency(),
 					rate.Price,
-					rate.QuoteCurrency,
+					rate.GetQuoteCurrency(),
 				),
 				Background: nil,
 			},
@@ -117,7 +121,7 @@ func (b *bannerBearRepo) getBannerRequestBody(chart []float64, rate *domain.Curr
 	})
 }
 
-func (b *bannerBearRepo) waitAndExtractBannerURL(imageURL string) (string, error) {
+func (b *bannerBearProvider) waitAndExtractBannerURL(imageURL string) (string, error) {
 	var (
 		jpgUrl string
 		err    error
@@ -135,7 +139,7 @@ func (b *bannerBearRepo) waitAndExtractBannerURL(imageURL string) (string, error
 	return jpgUrl, nil
 }
 
-func (b *bannerBearRepo) extractBannerURL(url string) (string, error) {
+func (b *bannerBearProvider) extractBannerURL(url string) (string, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return "", err

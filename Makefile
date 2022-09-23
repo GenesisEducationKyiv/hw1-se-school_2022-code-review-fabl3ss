@@ -11,12 +11,6 @@ test:
 test100:
 	go test -v -count=100 ./...
 
-.PHONY: cover
-cover:
-	go test -short -count=1 -race -coverprofile=coverage.out ./...
-	go tool cover -html=coverage.out
-	rm coverage.out
-
 .PHONY: .install-linter
 .install-linter:
 	### INSTALL GOLANGCI-LINT ###
@@ -39,6 +33,5 @@ cover:
 
 .PHONY: gen-mocks 
 gen-mocks:
-	mockgen -source=src/pkg/domain/emails.go \
-		-destination=src/pkg/domain/mocks/MailingRepository.go \
-		MailingRepository
+	mockgen -source=src/pkg/usecase/contracts.go \
+		-destination=src/pkg/usecase/mocks/persistence_mocks.go 

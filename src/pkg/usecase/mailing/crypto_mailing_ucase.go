@@ -3,23 +3,20 @@ package usecase
 import (
 	"genesis_test_case/src/pkg/delivery/http"
 	"genesis_test_case/src/pkg/domain"
+	"genesis_test_case/src/pkg/usecase"
 	"genesis_test_case/src/pkg/utils"
 )
 
-type CryptoMailingRepositories struct {
-	Repositories
-}
-
 type cryptoMailingUsecase struct {
 	pair             *domain.CurrencyPair
-	repos            *CryptoMailingRepositories
+	repos            *usecase.CryptoMailingRepositories
 	templatePathHTML string
 }
 
 func NewCryptoMailingUsecase(
 	htmlPath string,
 	pair *domain.CurrencyPair,
-	repos *CryptoMailingRepositories,
+	repos *usecase.CryptoMailingRepositories,
 ) http.CryptoMailingUsecase {
 	return &cryptoMailingUsecase{
 		pair:             pair,
@@ -51,7 +48,7 @@ func (c *cryptoMailingUsecase) sendToSubscribed(message *domain.EmailMessage) ([
 }
 
 func (c *cryptoMailingUsecase) getMailingBannerUrl() (string, error) {
-	chart, err := c.repos.Exchanger.GetWeekAverageChart(c.pair)
+	chart, err := c.repos.Chart.GetWeekAverageChart(c.pair)
 	if err != nil {
 		return "", err
 	}

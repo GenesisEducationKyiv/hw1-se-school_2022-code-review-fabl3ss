@@ -66,12 +66,3 @@ func (m *MailingHandler) Subscribe(c *fiber.Ctx) error {
 
 	return c.SendStatus(fiber.StatusOK)
 }
-
-func (m *MailingHandler) GetCurrencyRate(c *fiber.Ctx) error {
-	rate, err := m.usecases.Exchange.GetCurrentExchangePrice()
-	if err != nil {
-		return c.SendStatus(fiber.StatusBadRequest)
-	}
-
-	return c.JSON(rate)
-}
