@@ -1,15 +1,15 @@
 package exchangers
 
 import (
-	"genesis_test_case/src/pkg/domain"
-	"genesis_test_case/src/pkg/usecase"
+	"genesis_test_case/src/pkg/domain/models"
+	"genesis_test_case/src/pkg/domain/usecase"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
 
 func GetCurrencyRateTest(exchanger usecase.ExchangeProvider, t *testing.T) {
-	pair := domain.NewCurrencyPair(
+	pair := models.NewCurrencyPair(
 		"BTC",
 		"UAH",
 	)

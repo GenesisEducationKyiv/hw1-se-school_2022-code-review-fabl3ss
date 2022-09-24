@@ -3,12 +3,12 @@ package mailing
 import (
 	"encoding/base64"
 	"fmt"
+	"genesis_test_case/src/pkg/domain/models"
+	"genesis_test_case/src/pkg/domain/usecase"
 	"log"
 	"os"
 
 	"genesis_test_case/src/config"
-	"genesis_test_case/src/pkg/domain"
-	"genesis_test_case/src/pkg/usecase"
 	"genesis_test_case/src/platform/gmail_api"
 
 	"github.com/pkg/errors"
@@ -25,7 +25,7 @@ func NewGmailRepository(srv *gmail.Service) usecase.MailingRepository {
 	}
 }
 
-func (m *mailingGmailRepository) MultipleSending(msg *domain.EmailMessage, recipients []string) ([]string, error) {
+func (m *mailingGmailRepository) MultipleSending(msg *models.EmailMessage, recipients []string) ([]string, error) {
 	var (
 		unsent  []string
 		message gmail.Message

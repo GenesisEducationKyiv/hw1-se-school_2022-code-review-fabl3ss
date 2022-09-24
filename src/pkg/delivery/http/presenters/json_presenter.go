@@ -1,4 +1,4 @@
-package presentation
+package presenters
 
 import (
 	"genesis_test_case/src/pkg/delivery/http"
@@ -11,7 +11,7 @@ func NewPresenterJSON() http.ResponsePresenter {
 	return &jsonPresenter{}
 }
 
-func (j *jsonPresenter) PresentError(c *fiber.Ctx, resp *ErrorResponse) error {
+func (j *jsonPresenter) PresentError(c *fiber.Ctx, resp *http.ErrorResponse) error {
 	return c.JSON(
 		&fiber.Map{
 			"error": resp.Error,
@@ -20,11 +20,11 @@ func (j *jsonPresenter) PresentError(c *fiber.Ctx, resp *ErrorResponse) error {
 	)
 }
 
-func (j *jsonPresenter) PresentExchangeRate(c *fiber.Ctx, resp *RateResponse) error {
+func (j *jsonPresenter) PresentExchangeRate(c *fiber.Ctx, resp *http.RateResponse) error {
 	return c.JSON(resp.Rate)
 }
 
-func (j *jsonPresenter) PresentSendRate(c *fiber.Ctx, resp *SendRateResponse) error {
+func (j *jsonPresenter) PresentSendRate(c *fiber.Ctx, resp *http.SendRateResponse) error {
 	return c.JSON(
 		&fiber.Map{
 			"unsent": resp.UnsentEmails,

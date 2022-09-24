@@ -1,4 +1,4 @@
-package domain
+package models
 
 type Recipient struct {
 	Email string `json:"email" validate:"required,email"`

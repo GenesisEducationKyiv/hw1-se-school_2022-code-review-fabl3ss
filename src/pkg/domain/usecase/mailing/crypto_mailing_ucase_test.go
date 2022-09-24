@@ -2,10 +2,10 @@ package usecase
 
 import (
 	"genesis_test_case/src/config"
-	"genesis_test_case/src/pkg/domain"
+	"genesis_test_case/src/pkg/domain/models"
+	"genesis_test_case/src/pkg/domain/usecase"
+	mocks "genesis_test_case/src/pkg/domain/usecase/mocks"
 	"genesis_test_case/src/pkg/types/errors"
-	"genesis_test_case/src/pkg/usecase"
-	mocks "genesis_test_case/src/pkg/usecase/mocks"
 	"os"
 	"testing"
 
@@ -34,7 +34,7 @@ func TestSendCurrencyRate(t *testing.T) {
 			Exchanger: exchanger,
 		},
 	}
-	BTCUAHPair := domain.NewCurrencyPair(
+	BTCUAHPair := models.NewCurrencyPair(
 		os.Getenv(config.EnvBaseCurrency),
 		os.Getenv(config.EnvQuoteCurrency),
 	)
@@ -46,7 +46,7 @@ func TestSendCurrencyRate(t *testing.T) {
 	)
 	mockStorageResp := []string{"example@example.com"}
 	mockCryptoChartResp := []float64{0.0, 0.1, 0.2}
-	mockCryptoRateResp := &domain.CurrencyRate{}
+	mockCryptoRateResp := &models.CurrencyRate{}
 	mockBannerResp := "http://example.com/example"
 
 	chart.EXPECT().GetWeekAverageChart(BTCUAHPair).Return(mockCryptoChartResp, nil)
@@ -76,7 +76,7 @@ func TestSendCurrencyRateError(t *testing.T) {
 			Exchanger: exchanger,
 		},
 	}
-	BTCUAHPair := domain.NewCurrencyPair(
+	BTCUAHPair := models.NewCurrencyPair(
 		os.Getenv(config.EnvBaseCurrency),
 		os.Getenv(config.EnvQuoteCurrency),
 	)

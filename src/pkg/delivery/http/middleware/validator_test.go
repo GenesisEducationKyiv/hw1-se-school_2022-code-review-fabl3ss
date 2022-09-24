@@ -1,7 +1,7 @@
-package utils
+package middleware
 
 import (
-	"genesis_test_case/src/pkg/domain"
+	"genesis_test_case/src/pkg/domain/models"
 	"genesis_test_case/src/pkg/types/errors"
 	"testing"
 
@@ -9,7 +9,7 @@ import (
 )
 
 func TestValidateStruct(t *testing.T) {
-	input := &domain.Recipient{
+	input := &models.Recipient{
 		Email: "test@test.com",
 	}
 	_, err := ValidateStruct(input)
@@ -29,7 +29,7 @@ func TestValidateStructError(t *testing.T) {
 		},
 		{
 			testName: "bad_email",
-			input: &domain.Recipient{
+			input: &models.Recipient{
 				Email: "testemail123",
 			},
 			expectedErr: errors.ErrValidationFailed,

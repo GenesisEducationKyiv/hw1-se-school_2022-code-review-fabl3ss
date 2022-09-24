@@ -1,8 +1,8 @@
 package exchangers
 
 import (
-	"genesis_test_case/src/pkg/domain"
-	"genesis_test_case/src/pkg/usecase"
+	"genesis_test_case/src/pkg/domain/models"
+	"genesis_test_case/src/pkg/domain/usecase"
 )
 
 type exchangerNode struct {
@@ -16,7 +16,7 @@ func NewExchangerNode(exc usecase.ExchangeProvider) usecase.ExchangeProviderNode
 	}
 }
 
-func (c *exchangerNode) GetCurrencyRate(pair *domain.CurrencyPair) (*domain.CurrencyRate, error) {
+func (c *exchangerNode) GetCurrencyRate(pair *models.CurrencyPair) (*models.CurrencyRate, error) {
 	rate, err := c.exchanger.GetCurrencyRate(pair)
 	if err != nil && c.next != nil {
 		return c.next.GetCurrencyRate(pair)

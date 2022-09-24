@@ -5,8 +5,12 @@ import (
 	"genesis_test_case/src/loggers"
 	"genesis_test_case/src/pkg/delivery/http"
 	"genesis_test_case/src/pkg/delivery/http/middleware"
-	"genesis_test_case/src/pkg/delivery/http/presentation"
-	"genesis_test_case/src/pkg/domain"
+	"genesis_test_case/src/pkg/delivery/http/presenters"
+	"genesis_test_case/src/pkg/domain/models"
+	"genesis_test_case/src/pkg/domain/usecase"
+	usecase2 "genesis_test_case/src/pkg/domain/usecase/exchange"
+	mailingUsecase "genesis_test_case/src/pkg/domain/usecase/mailing"
+	subscriptionUsecase "genesis_test_case/src/pkg/domain/usecase/subscription"
 	"genesis_test_case/src/pkg/persistence/crypto"
 	"genesis_test_case/src/pkg/persistence/crypto/banners"
 	"genesis_test_case/src/pkg/persistence/crypto/charts"
@@ -14,10 +18,6 @@ import (
 	"genesis_test_case/src/pkg/persistence/mailing"
 	storage "genesis_test_case/src/pkg/persistence/storage/csv"
 	"genesis_test_case/src/pkg/persistence/storage/redis"
-	"genesis_test_case/src/pkg/usecase"
-	exchangeUsecase "genesis_test_case/src/pkg/usecase/exchange"
-	mailingUsecase "genesis_test_case/src/pkg/usecase/mailing"
-	subscriptionUsecase "genesis_test_case/src/pkg/usecase/subscription"
 	"genesis_test_case/src/platform/gmail_api"
 	"os"
 	"strconv"
@@ -26,22 +26,39 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func createRepositories() (*usecase.Repositories, error) {
-	gmailService, err := gmail_api.GetGmailService()
+func InitRoutes(app *fiber.App) error {
+	repos, err := createRepositories()
 	if err != nil {
-		return nil, err
+		return err
 	}
-	csvStorage := storage.NewCsvEmaiStorage(os.Getenv(config.EnvStorageFilePath))
-	mailingGmailRepository := mailing.NewGmailRepository(gmailService)
-	cryptobannerBearProvidersitory := banners.BannerBearProviderFactory{}.CreateBannerProvider()
-	exchangeProvider := exchangers.CoinApiProviderFactory{}.CreateExchangeProvider()
-	chartProvider := charts.CoinbaseProviderFactory{}.CreateChartProvider()
-	return &usecase.Repositories{
-		Banner:    cryptobannerBearProvidersitory,
-		Storage:   csvStorage,
-		Mailer:    mailingGmailRepository,
-		Exchanger: exchangeProvider,
-		Chart:     chartProvider,
+	usecases, err := createUsecases(repos)
+	if err != nil {
+		return err
+	}
+	handlers, err := createHandlers(usecases)
+	if err != nil {
+		return err
+	}
+
+	middleware.FiberMiddleware(app)
+	InitPublicRoutes(app, handlers)
+
+	return nil
+}
+
+func createHandlers(usecases *http.Usecases) (*Handlers, error) {
+	cryptoMailingUsecases := &http.CryptoMailingUsecases{
+		Exchange:     usecases.CryptoExchanger,
+		Mailing:      usecases.CryptoMailing,
+		Subscription: usecases.Subscription,
+	}
+	presenter := presenters.NewPresenterJSON()
+	mailingHandler := http.NewMailingHandler(cryptoMailingUsecases, presenter)
+	rateHandler := http.NewConfigRateHandler(usecases.CryptoExchanger, presenter)
+
+	return &Handlers{
+		Mailing: mailingHandler,
+		Rate:    rateHandler,
 	}, nil
 }
 
@@ -49,7 +66,7 @@ func createUsecases(repos *usecase.Repositories) (*http.Usecases, error) {
 	cryptoMailingRepositories := &usecase.CryptoMailingRepositories{
 		Repositories: *repos,
 	}
-	BTCUAHPair := domain.NewCurrencyPair(
+	BTCUAHPair := models.NewCurrencyPair(
 		os.Getenv(config.EnvBaseCurrency),
 		os.Getenv(config.EnvQuoteCurrency),
 	)
@@ -66,7 +83,7 @@ func createUsecases(repos *usecase.Repositories) (*http.Usecases, error) {
 
 	configuredExchanger := getConfiguredExchanger()
 
-	cryptoExchangeUsecase := exchangeUsecase.NewCryptoExchangeUsecase(
+	cryptoExchangeUsecase := usecase2.NewCryptoExchangeUsecase(
 		configuredExchanger,
 		cryptoCache,
 	)
@@ -102,6 +119,25 @@ func setupCryptoCache() (usecase.CryptoCache, error) {
 	return crypto.NewCryptoCache(cacheProvider), nil
 }
 
+func createRepositories() (*usecase.Repositories, error) {
+	gmailService, err := gmail_api.GetGmailService()
+	if err != nil {
+		return nil, err
+	}
+	csvStorage := storage.NewCsvEmaiStorage(os.Getenv(config.EnvStorageFilePath))
+	mailingGmailRepository := mailing.NewGmailRepository(gmailService)
+	cryptobannerBearProvidersitory := banners.BannerBearProviderFactory{}.CreateBannerProvider()
+	exchangeProvider := exchangers.CoinApiProviderFactory{}.CreateExchangeProvider()
+	chartProvider := charts.CoinbaseProviderFactory{}.CreateChartProvider()
+	return &usecase.Repositories{
+		Banner:    cryptobannerBearProvidersitory,
+		Storage:   csvStorage,
+		Mailer:    mailingGmailRepository,
+		Exchanger: exchangeProvider,
+		Chart:     chartProvider,
+	}, nil
+}
+
 func getConfiguredExchanger() usecase.ExchangeProvider {
 	logger := loggers.NewZapLogger(os.Getenv(config.EnvLogPath))
 	cryptoLogger := crypto.NewCryptoLogger(logger)
@@ -118,7 +154,7 @@ func getConfiguredExchanger() usecase.ExchangeProvider {
 	coinbaseExchangerNode := exchangers.NewExchangerNode(loggingCoinbaseExchanger)
 	nomicsExchangerNode := exchangers.NewExchangerNode(loggingNomicsExchanger)
 
-	chain := exchangeUsecase.NewExchangersChain()
+	chain := usecase2.NewExchangersChain()
 	chain.RegisterExchanger(
 		config.CoinAPIExchangerName,
 		coinapiExchangerNode,
@@ -138,40 +174,4 @@ func getConfiguredExchanger() usecase.ExchangeProvider {
 	return chain.GetExchanger(
 		os.Getenv(config.EnvDefaultExchangerName),
 	)
-}
-
-func createHandlers(usecases *http.Usecases) (*Handlers, error) {
-	cryptoMailingUsecases := &http.CryptoMailingUsecases{
-		Exchange:     usecases.CryptoExchanger,
-		Mailing:      usecases.CryptoMailing,
-		Subscription: usecases.Subscription,
-	}
-	presenter := presentation.NewPresenterJSON()
-	mailingHandler := http.NewMailingHandler(cryptoMailingUsecases, presenter)
-	rateHandler := http.NewConfigRateHandler(usecases.CryptoExchanger, presenter)
-
-	return &Handlers{
-		Mailing: mailingHandler,
-		Rate:    rateHandler,
-	}, nil
-}
-
-func InitRoutes(app *fiber.App) error {
-	repos, err := createRepositories()
-	if err != nil {
-		return err
-	}
-	usecases, err := createUsecases(repos)
-	if err != nil {
-		return err
-	}
-	handlers, err := createHandlers(usecases)
-	if err != nil {
-		return err
-	}
-
-	middleware.FiberMiddleware(app)
-	InitPublicRoutes(app, handlers)
-
-	return nil
 }

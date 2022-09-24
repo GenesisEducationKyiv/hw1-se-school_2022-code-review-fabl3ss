@@ -2,8 +2,8 @@ package charts
 
 import (
 	"fmt"
-	"genesis_test_case/src/pkg/domain"
-	"genesis_test_case/src/pkg/usecase"
+	"genesis_test_case/src/pkg/domain/models"
+	"genesis_test_case/src/pkg/domain/usecase"
 	"genesis_test_case/src/pkg/utils"
 	"strconv"
 	"time"
@@ -29,7 +29,7 @@ type chartProps struct {
 	End         string
 }
 
-func (c *coinbaseChartProvider) GetWeekAverageChart(pair *domain.CurrencyPair) ([]float64, error) {
+func (c *coinbaseChartProvider) GetWeekAverageChart(pair *models.CurrencyPair) ([]float64, error) {
 	var averageCandles []float64
 	weekCandles, err := c.getWeekCandles(pair)
 	if err != nil {
@@ -44,7 +44,7 @@ func (c *coinbaseChartProvider) GetWeekAverageChart(pair *domain.CurrencyPair) (
 	return averageCandles, nil
 }
 
-func (c *coinbaseChartProvider) getWeekCandles(pair *domain.CurrencyPair) ([][]float64, error) {
+func (c *coinbaseChartProvider) getWeekCandles(pair *models.CurrencyPair) ([][]float64, error) {
 	nowUtc := time.Now().UTC()
 	weekCandlesProps := &chartProps{
 		Base:        pair.GetBaseCurrency(),

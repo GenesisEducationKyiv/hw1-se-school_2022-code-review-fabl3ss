@@ -1,8 +1,8 @@
 package exchangers
 
 import (
-	"genesis_test_case/src/pkg/domain"
-	"genesis_test_case/src/pkg/usecase"
+	"genesis_test_case/src/pkg/domain/models"
+	"genesis_test_case/src/pkg/domain/usecase"
 	"reflect"
 )
 
@@ -18,7 +18,7 @@ func NewLoggingExchanger(exc usecase.ExchangeProvider, log usecase.CryptoLogger)
 	}
 }
 
-func (l *loggingExchanger) GetCurrencyRate(pair *domain.CurrencyPair) (*domain.CurrencyRate, error) {
+func (l *loggingExchanger) GetCurrencyRate(pair *models.CurrencyPair) (*models.CurrencyRate, error) {
 	rate, err := l.exchanger.GetCurrencyRate(pair)
 	if err != nil {
 		return nil, err

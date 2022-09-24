@@ -1,9 +1,4 @@
-package domain
-
-type CurrencyRate struct {
-	CurrencyPair
-	Price float64
-}
+package models
 
 type CurrencyPair struct {
 	baseCurrency  string

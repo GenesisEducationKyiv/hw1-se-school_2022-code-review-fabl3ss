@@ -1,9 +1,9 @@
 package usecase
 
 import (
-	"genesis_test_case/src/pkg/domain"
+	"genesis_test_case/src/pkg/domain/models"
+	mocks "genesis_test_case/src/pkg/domain/usecase/mocks"
 	myerr "genesis_test_case/src/pkg/types/errors"
-	mocks "genesis_test_case/src/pkg/usecase/mocks"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -17,7 +17,7 @@ func TestSubscribe(t *testing.T) {
 	subscriptionUsecase := NewSubscriptionUsecase(
 		mockStorage,
 	)
-	recipient := &domain.Recipient{
+	recipient := &models.Recipient{
 		Email: "test@test.com",
 	}
 
@@ -33,7 +33,7 @@ func TestSubscribeError(t *testing.T) {
 	subscriptionUsecase := NewSubscriptionUsecase(
 		mockStorage,
 	)
-	recipient := &domain.Recipient{
+	recipient := &models.Recipient{
 		Email: "test@test.com",
 	}
 

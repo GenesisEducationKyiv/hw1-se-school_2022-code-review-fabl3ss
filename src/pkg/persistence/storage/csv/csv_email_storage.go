@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"genesis_test_case/src/pkg/usecase"
+	"genesis_test_case/src/pkg/domain/usecase"
 	"genesis_test_case/src/pkg/utils"
 )
 

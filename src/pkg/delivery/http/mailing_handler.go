@@ -2,11 +2,9 @@ package http
 
 import (
 	"errors"
-	"genesis_test_case/src/pkg/delivery/http/presentation"
-	"genesis_test_case/src/pkg/domain"
+	"genesis_test_case/src/pkg/delivery/http/middleware"
+	"genesis_test_case/src/pkg/domain/models"
 	myerr "genesis_test_case/src/pkg/types/errors"
-	"genesis_test_case/src/pkg/utils"
-
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -36,7 +34,7 @@ func (m *MailingHandler) SendRate(c *fiber.Ctx) error {
 
 	if len(unsent) > 0 {
 		return m.presenter.PresentSendRate(c,
-			&presentation.SendRateResponse{
+			&SendRateResponse{
 				UnsentEmails: unsent,
 			},
 		)
@@ -46,9 +44,9 @@ func (m *MailingHandler) SendRate(c *fiber.Ctx) error {
 }
 
 func (m *MailingHandler) Subscribe(c *fiber.Ctx) error {
-	recipient := new(domain.Recipient)
+	recipient := new(models.Recipient)
 
-	errMsg, err := utils.ParseAndValidate(c, recipient)
+	errMsg, err := middleware.ParseAndValidate(c, recipient)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(errMsg)
 	}
@@ -59,7 +57,7 @@ func (m *MailingHandler) Subscribe(c *fiber.Ctx) error {
 			return c.SendStatus(fiber.StatusConflict)
 		}
 		return m.presenter.PresentError(c,
-			&presentation.ErrorResponse{
+			&ErrorResponse{
 				Error:   true,
 				Message: err.Error(),
 			},

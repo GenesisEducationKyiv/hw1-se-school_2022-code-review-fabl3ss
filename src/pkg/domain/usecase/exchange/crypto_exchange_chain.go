@@ -1,8 +1,8 @@
 package usecase
 
 import (
+	"genesis_test_case/src/pkg/domain/usecase"
 	myerr "genesis_test_case/src/pkg/types/errors"
-	"genesis_test_case/src/pkg/usecase"
 )
 
 type exchangersChain struct {

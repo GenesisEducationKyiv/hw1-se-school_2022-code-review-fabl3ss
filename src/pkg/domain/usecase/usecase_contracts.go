@@ -1,9 +1,11 @@
 package usecase
 
-import "genesis_test_case/src/pkg/domain"
+import (
+	"genesis_test_case/src/pkg/domain/models"
+)
 
 type MailingRepository interface {
-	MultipleSending(message *domain.EmailMessage, adresses []string) ([]string, error)
+	MultipleSending(message *models.EmailMessage, adresses []string) ([]string, error)
 }
 
 type EmailStorage interface {
@@ -12,11 +14,11 @@ type EmailStorage interface {
 }
 
 type ExchangeProvider interface {
-	GetCurrencyRate(pair *domain.CurrencyPair) (*domain.CurrencyRate, error)
+	GetCurrencyRate(pair *models.CurrencyPair) (*models.CurrencyRate, error)
 }
 
 type ChartProvider interface {
-	GetWeekAverageChart(pair *domain.CurrencyPair) ([]float64, error)
+	GetWeekAverageChart(pair *models.CurrencyPair) ([]float64, error)
 }
 
 type ExchangeProviderNode interface {
@@ -30,7 +32,7 @@ type ExchangersChain interface {
 }
 
 type CryptoBannerProvider interface {
-	GetCryptoBannerUrl(chart []float64, rate *domain.CurrencyRate) (string, error)
+	GetCryptoBannerUrl(chart []float64, rate *models.CurrencyRate) (string, error)
 }
 
 type Cache interface {
@@ -39,12 +41,12 @@ type Cache interface {
 }
 
 type CryptoCache interface {
-	SetCurrencyCache(key string, rate *domain.CurrencyRate) error
-	GetCurrencyCache(key string) (*domain.CurrencyRate, error)
+	SetCurrencyCache(key string, rate *models.CurrencyRate) error
+	GetCurrencyCache(key string) (*models.CurrencyRate, error)
 }
 
 type CryptoLogger interface {
-	LogExchangeRate(provider string, rate *domain.CurrencyRate)
+	LogExchangeRate(provider string, rate *models.CurrencyRate)
 }
 
 type Repositories struct {

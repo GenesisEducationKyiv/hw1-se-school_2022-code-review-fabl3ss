@@ -5,8 +5,8 @@
 package mock_usecase
 
 import (
-	domain "genesis_test_case/src/pkg/domain"
-	usecase "genesis_test_case/src/pkg/usecase"
+	"genesis_test_case/src/pkg/domain/models"
+	"genesis_test_case/src/pkg/domain/usecase"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -36,7 +36,7 @@ func (m *MockMailingRepository) EXPECT() *MockMailingRepositoryMockRecorder {
 }
 
 // MultipleSending mocks base method.
-func (m *MockMailingRepository) MultipleSending(message *domain.EmailMessage, adresses []string) ([]string, error) {
+func (m *MockMailingRepository) MultipleSending(message *models.EmailMessage, adresses []string) ([]string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "MultipleSending", message, adresses)
 	ret0, _ := ret[0].([]string)
@@ -126,10 +126,10 @@ func (m *MockExchangeProvider) EXPECT() *MockExchangeProviderMockRecorder {
 }
 
 // GetCurrencyRate mocks base method.
-func (m *MockExchangeProvider) GetCurrencyRate(pair *domain.CurrencyPair) (*domain.CurrencyRate, error) {
+func (m *MockExchangeProvider) GetCurrencyRate(pair *models.CurrencyPair) (*models.CurrencyRate, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCurrencyRate", pair)
-	ret0, _ := ret[0].(*domain.CurrencyRate)
+	ret0, _ := ret[0].(*models.CurrencyRate)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -164,7 +164,7 @@ func (m *MockChartProvider) EXPECT() *MockChartProviderMockRecorder {
 }
 
 // GetWeekAverageChart mocks base method.
-func (m *MockChartProvider) GetWeekAverageChart(pair *domain.CurrencyPair) ([]float64, error) {
+func (m *MockChartProvider) GetWeekAverageChart(pair *models.CurrencyPair) ([]float64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetWeekAverageChart", pair)
 	ret0, _ := ret[0].([]float64)
@@ -202,10 +202,10 @@ func (m *MockExchangeProviderNode) EXPECT() *MockExchangeProviderNodeMockRecorde
 }
 
 // GetCurrencyRate mocks base method.
-func (m *MockExchangeProviderNode) GetCurrencyRate(pair *domain.CurrencyPair) (*domain.CurrencyRate, error) {
+func (m *MockExchangeProviderNode) GetCurrencyRate(pair *models.CurrencyPair) (*models.CurrencyRate, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCurrencyRate", pair)
-	ret0, _ := ret[0].(*domain.CurrencyRate)
+	ret0, _ := ret[0].(*models.CurrencyRate)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -303,7 +303,7 @@ func (m *MockCryptoBannerProvider) EXPECT() *MockCryptoBannerProviderMockRecorde
 }
 
 // GetCryptoBannerUrl mocks base method.
-func (m *MockCryptoBannerProvider) GetCryptoBannerUrl(chart []float64, rate *domain.CurrencyRate) (string, error) {
+func (m *MockCryptoBannerProvider) GetCryptoBannerUrl(chart []float64, rate *models.CurrencyRate) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCryptoBannerUrl", chart, rate)
 	ret0, _ := ret[0].(string)
@@ -393,10 +393,10 @@ func (m *MockCryptoCache) EXPECT() *MockCryptoCacheMockRecorder {
 }
 
 // GetCurrencyCache mocks base method.
-func (m *MockCryptoCache) GetCurrencyCache(key string) (*domain.CurrencyRate, error) {
+func (m *MockCryptoCache) GetCurrencyCache(key string) (*models.CurrencyRate, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetCurrencyCache", key)
-	ret0, _ := ret[0].(*domain.CurrencyRate)
+	ret0, _ := ret[0].(*models.CurrencyRate)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -408,7 +408,7 @@ func (mr *MockCryptoCacheMockRecorder) GetCurrencyCache(key interface{}) *gomock
 }
 
 // SetCurrencyCache mocks base method.
-func (m *MockCryptoCache) SetCurrencyCache(key string, rate *domain.CurrencyRate) error {
+func (m *MockCryptoCache) SetCurrencyCache(key string, rate *models.CurrencyRate) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SetCurrencyCache", key, rate)
 	ret0, _ := ret[0].(error)
@@ -445,7 +445,7 @@ func (m *MockCryptoLogger) EXPECT() *MockCryptoLoggerMockRecorder {
 }
 
 // LogExchangeRate mocks base method.
-func (m *MockCryptoLogger) LogExchangeRate(provider string, rate *domain.CurrencyRate) {
+func (m *MockCryptoLogger) LogExchangeRate(provider string, rate *models.CurrencyRate) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "LogExchangeRate", provider, rate)
 }

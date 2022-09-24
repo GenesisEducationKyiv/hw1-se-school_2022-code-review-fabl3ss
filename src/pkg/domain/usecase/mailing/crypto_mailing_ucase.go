@@ -2,20 +2,20 @@ package usecase
 
 import (
 	"genesis_test_case/src/pkg/delivery/http"
-	"genesis_test_case/src/pkg/domain"
-	"genesis_test_case/src/pkg/usecase"
+	"genesis_test_case/src/pkg/domain/models"
+	"genesis_test_case/src/pkg/domain/usecase"
 	"genesis_test_case/src/pkg/utils"
 )
 
 type cryptoMailingUsecase struct {
-	pair             *domain.CurrencyPair
+	pair             *models.CurrencyPair
 	repos            *usecase.CryptoMailingRepositories
 	templatePathHTML string
 }
 
 func NewCryptoMailingUsecase(
 	htmlPath string,
-	pair *domain.CurrencyPair,
+	pair *models.CurrencyPair,
 	repos *usecase.CryptoMailingRepositories,
 ) http.CryptoMailingUsecase {
 	return &cryptoMailingUsecase{
@@ -38,7 +38,7 @@ func (c *cryptoMailingUsecase) SendCurrencyRate() ([]string, error) {
 	return c.sendToSubscribed(messageBody)
 }
 
-func (c *cryptoMailingUsecase) sendToSubscribed(message *domain.EmailMessage) ([]string, error) {
+func (c *cryptoMailingUsecase) sendToSubscribed(message *models.EmailMessage) ([]string, error) {
 	recipients, err := c.repos.Storage.GetAllEmails()
 	if err != nil {
 		return nil, err
@@ -60,7 +60,7 @@ func (c *cryptoMailingUsecase) getMailingBannerUrl() (string, error) {
 	return c.repos.Banner.GetCryptoBannerUrl(chart, rate)
 }
 
-func (c *cryptoMailingUsecase) buildMessage(bannerURL string) (*domain.EmailMessage, error) {
+func (c *cryptoMailingUsecase) buildMessage(bannerURL string) (*models.EmailMessage, error) {
 	v := struct {
 		Chart string
 	}{Chart: bannerURL}
@@ -70,7 +70,7 @@ func (c *cryptoMailingUsecase) buildMessage(bannerURL string) (*domain.EmailMess
 		return nil, err
 	}
 
-	return &domain.EmailMessage{
+	return &models.EmailMessage{
 		Subject: "Crypto Newsletter",
 		Body:    htmlContent.String(),
 	}, nil

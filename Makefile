@@ -11,6 +11,9 @@ test:
 test100:
 	go test -v -count=100 ./...
 
+test-arch:
+	go test -v ./tests/arch/...
+
 .PHONY: .install-linter
 .install-linter:
 	### INSTALL GOLANGCI-LINT ###

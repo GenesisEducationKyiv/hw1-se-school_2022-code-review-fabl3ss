@@ -2,9 +2,9 @@ package usecase
 
 import (
 	"genesis_test_case/src/config"
-	"genesis_test_case/src/pkg/domain"
+	"genesis_test_case/src/pkg/domain/models"
+	mocks "genesis_test_case/src/pkg/domain/usecase/mocks"
 	myerr "genesis_test_case/src/pkg/types/errors"
-	mocks "genesis_test_case/src/pkg/usecase/mocks"
 	"os"
 	"testing"
 
@@ -21,7 +21,7 @@ func TestGetConfigCurrencyRate(t *testing.T) {
 	defer ctl.Finish()
 	mockExchanger := mocks.NewMockExchangeProvider(ctl)
 	mockCryptoCache := mocks.NewMockCryptoCache(ctl)
-	BTCUAHPair := domain.NewCurrencyPair(
+	BTCUAHPair := models.NewCurrencyPair(
 		os.Getenv(config.EnvBaseCurrency),
 		os.Getenv(config.EnvQuoteCurrency),
 	)
@@ -31,7 +31,7 @@ func TestGetConfigCurrencyRate(t *testing.T) {
 		mockCryptoCache,
 	)
 
-	mockResp := &domain.CurrencyRate{
+	mockResp := &models.CurrencyRate{
 		CurrencyPair: *BTCUAHPair,
 		Price:        123.123,
 	}

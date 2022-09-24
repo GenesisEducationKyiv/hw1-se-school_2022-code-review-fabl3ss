@@ -2,8 +2,8 @@ package crypto
 
 import (
 	"genesis_test_case/src/loggers"
-	"genesis_test_case/src/pkg/domain"
-	"genesis_test_case/src/pkg/usecase"
+	"genesis_test_case/src/pkg/domain/models"
+	"genesis_test_case/src/pkg/domain/usecase"
 )
 
 type cryptoLogger struct {
@@ -16,7 +16,7 @@ func NewCryptoLogger(logger loggers.Logger) usecase.CryptoLogger {
 	}
 }
 
-func (c *cryptoLogger) LogExchangeRate(provider string, rate *domain.CurrencyRate) {
+func (c *cryptoLogger) LogExchangeRate(provider string, rate *models.CurrencyRate) {
 	c.logger.Infow(
 		"recieved rate",
 		"provider", provider,

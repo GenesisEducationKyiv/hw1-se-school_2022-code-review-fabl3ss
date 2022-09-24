@@ -4,14 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"genesis_test_case/src/pkg/domain/models"
+	"genesis_test_case/src/pkg/domain/usecase"
 	"log"
 	"net/http"
 	"os"
 	"time"
 
 	"genesis_test_case/src/config"
-	"genesis_test_case/src/pkg/domain"
-	"genesis_test_case/src/pkg/usecase"
 	"genesis_test_case/src/pkg/utils"
 )
 
@@ -46,7 +46,7 @@ func (factory BannerBearProviderFactory) CreateBannerProvider() usecase.CryptoBa
 	}
 }
 
-func (b *bannerBearProvider) GetCryptoBannerUrl(chart []float64, rate *domain.CurrencyRate) (string, error) {
+func (b *bannerBearProvider) GetCryptoBannerUrl(chart []float64, rate *models.CurrencyRate) (string, error) {
 	generationUrl, err := b.getGenerationBannerURL(chart, rate)
 	if err != nil {
 		return "", err
@@ -58,7 +58,7 @@ func (b *bannerBearProvider) addBannerBearer(r *http.Request) {
 	r.Header.Add("Authorization", "Bearer "+b.bearer)
 }
 
-func (b *bannerBearProvider) getGenerationBannerURL(chart []float64, rate *domain.CurrencyRate) (string, error) {
+func (b *bannerBearProvider) getGenerationBannerURL(chart []float64, rate *models.CurrencyRate) (string, error) {
 	reqBody, err := b.getBannerRequestBody(chart, rate)
 	if err != nil {
 		return "", err
@@ -85,7 +85,7 @@ func (b *bannerBearProvider) getGenerationBannerURL(chart []float64, rate *domai
 	return generationURL.Self, nil
 }
 
-func (b *bannerBearProvider) getBannerRequestBody(chart []float64, rate *domain.CurrencyRate) ([]byte, error) {
+func (b *bannerBearProvider) getBannerRequestBody(chart []float64, rate *models.CurrencyRate) ([]byte, error) {
 	return json.Marshal(&bannerBearRequest{
 		Template:    b.templateId,
 		Transparent: false,

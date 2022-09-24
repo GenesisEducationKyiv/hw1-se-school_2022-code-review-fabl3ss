@@ -4,13 +4,13 @@ import (
 	"errors"
 	"genesis_test_case/src/config"
 	"genesis_test_case/src/pkg/delivery/http"
-	"genesis_test_case/src/pkg/domain"
+	"genesis_test_case/src/pkg/domain/models"
+	"genesis_test_case/src/pkg/domain/usecase"
 	myerr "genesis_test_case/src/pkg/types/errors"
-	"genesis_test_case/src/pkg/usecase"
 )
 
 type CryptoExchangerUsecase struct {
-	pair           *domain.CurrencyPair
+	pair           *models.CurrencyPair
 	cryptoProvider usecase.ExchangeProvider
 	cache          usecase.CryptoCache
 }
@@ -25,7 +25,7 @@ func NewCryptoExchangeUsecase(
 	}
 }
 
-func (c *CryptoExchangerUsecase) GetCurrentExchangePrice(pair *domain.CurrencyPair) (float64, error) {
+func (c *CryptoExchangerUsecase) GetCurrentExchangePrice(pair *models.CurrencyPair) (float64, error) {
 	cacheRate, err := c.cache.GetCurrencyCache(config.CryptoCacheKey)
 	if err != nil {
 		if errors.Is(err, myerr.ErrNoCache) {

@@ -1,7 +1,7 @@
 package charts
 
 import (
-	"genesis_test_case/src/pkg/domain"
+	"genesis_test_case/src/pkg/domain/models"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -9,7 +9,7 @@ import (
 
 func TestGetWeekChart(t *testing.T) {
 	coinbaseRepo := CoinbaseProviderFactory{}.CreateChartProvider()
-	pair := domain.NewCurrencyPair(
+	pair := models.NewCurrencyPair(
 		"BTC",
 		"UAH",
 	)
