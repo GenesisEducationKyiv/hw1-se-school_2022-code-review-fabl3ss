@@ -2,8 +2,8 @@ package usecase
 
 import (
 	"genesis_test_case/src/config"
+	mocks "genesis_test_case/src/pkg/application/mocks"
 	"genesis_test_case/src/pkg/domain/models"
-	mocks "genesis_test_case/src/pkg/domain/usecase/mocks"
 	myerr "genesis_test_case/src/pkg/types/errors"
 	"os"
 	"testing"

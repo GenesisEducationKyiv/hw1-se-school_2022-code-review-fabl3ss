@@ -2,17 +2,19 @@ package http
 
 import (
 	"genesis_test_case/src/config"
+	"genesis_test_case/src/pkg/delivery/http/responses"
 	"genesis_test_case/src/pkg/domain/models"
+	"genesis_test_case/src/pkg/domain/usecases"
 	"github.com/gofiber/fiber/v2"
 	"os"
 )
 
 type ConfigRateHandler struct {
-	exchangeUsecase CryptoExchangerUsecase
+	exchangeUsecase usecases.CryptoExchangerUsecase
 	presenter       ResponsePresenter
 }
 
-func NewConfigRateHandler(exchanger CryptoExchangerUsecase, presenter ResponsePresenter) *ConfigRateHandler {
+func NewConfigRateHandler(exchanger usecases.CryptoExchangerUsecase, presenter ResponsePresenter) *ConfigRateHandler {
 	return &ConfigRateHandler{
 		exchangeUsecase: exchanger,
 		presenter:       presenter,
@@ -31,7 +33,7 @@ func (r *ConfigRateHandler) GetCurrencyRate(c *fiber.Ctx) error {
 	}
 
 	return r.presenter.PresentExchangeRate(c,
-		&RateResponse{
+		&responses.RateResponse{
 			Rate: rate,
 		},
 	)

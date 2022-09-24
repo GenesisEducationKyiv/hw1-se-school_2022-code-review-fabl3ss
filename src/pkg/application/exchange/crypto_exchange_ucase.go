@@ -3,22 +3,22 @@ package usecase
 import (
 	"errors"
 	"genesis_test_case/src/config"
-	"genesis_test_case/src/pkg/delivery/http"
+	"genesis_test_case/src/pkg/application"
 	"genesis_test_case/src/pkg/domain/models"
-	"genesis_test_case/src/pkg/domain/usecase"
+	"genesis_test_case/src/pkg/domain/usecases"
 	myerr "genesis_test_case/src/pkg/types/errors"
 )
 
 type CryptoExchangerUsecase struct {
 	pair           *models.CurrencyPair
-	cryptoProvider usecase.ExchangeProvider
-	cache          usecase.CryptoCache
+	cryptoProvider application.ExchangeProvider
+	cache          application.CryptoCache
 }
 
 func NewCryptoExchangeUsecase(
-	crypto usecase.ExchangeProvider,
-	cache usecase.CryptoCache,
-) http.CryptoExchangerUsecase {
+	crypto application.ExchangeProvider,
+	cache application.CryptoCache,
+) usecases.CryptoExchangerUsecase {
 	return &CryptoExchangerUsecase{
 		cryptoProvider: crypto,
 		cache:          cache,

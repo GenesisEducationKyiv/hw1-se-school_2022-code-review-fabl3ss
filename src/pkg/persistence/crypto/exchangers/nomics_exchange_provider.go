@@ -3,8 +3,8 @@ package exchangers
 import (
 	"fmt"
 	"genesis_test_case/src/config"
+	"genesis_test_case/src/pkg/application"
 	"genesis_test_case/src/pkg/domain/models"
-	"genesis_test_case/src/pkg/domain/usecase"
 	"genesis_test_case/src/pkg/utils"
 	"net/http"
 	"os"
@@ -12,7 +12,7 @@ import (
 
 type NomicsProviderFactory struct{}
 
-func (factory NomicsProviderFactory) CreateExchangeProvider() usecase.ExchangeProvider {
+func (factory NomicsProviderFactory) CreateExchangeProvider() application.ExchangeProvider {
 	return &nomicsExchangeProvider{
 		exchangeTemplateUrl: "https://api.nomics.com/v1/currencies/ticker?key=%v&ids=%v&interval=1d&convert=%v",
 		apiKey:              os.Getenv(config.EnvNomicsApiKey),

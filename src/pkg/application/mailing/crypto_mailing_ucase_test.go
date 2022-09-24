@@ -2,9 +2,9 @@ package usecase
 
 import (
 	"genesis_test_case/src/config"
+	"genesis_test_case/src/pkg/application"
+	mocks "genesis_test_case/src/pkg/application/mocks"
 	"genesis_test_case/src/pkg/domain/models"
-	"genesis_test_case/src/pkg/domain/usecase"
-	mocks "genesis_test_case/src/pkg/domain/usecase/mocks"
 	"genesis_test_case/src/pkg/types/errors"
 	"os"
 	"testing"
@@ -25,8 +25,8 @@ func TestSendCurrencyRate(t *testing.T) {
 	banner := mocks.NewMockCryptoBannerProvider(ctl)
 	storage := mocks.NewMockEmailStorage(ctl)
 	exchanger := mocks.NewMockExchangeProvider(ctl)
-	mockRepos := &usecase.CryptoMailingRepositories{
-		Repositories: usecase.Repositories{
+	mockRepos := &application.CryptoMailingRepositories{
+		Repositories: application.Repositories{
 			Chart:     chart,
 			Mailer:    mailer,
 			Banner:    banner,
@@ -67,8 +67,8 @@ func TestSendCurrencyRateError(t *testing.T) {
 	banner := mocks.NewMockCryptoBannerProvider(ctl)
 	storage := mocks.NewMockEmailStorage(ctl)
 	exchanger := mocks.NewMockExchangeProvider(ctl)
-	mockRepos := usecase.CryptoMailingRepositories{
-		Repositories: usecase.Repositories{
+	mockRepos := application.CryptoMailingRepositories{
+		Repositories: application.Repositories{
 			Chart:     chart,
 			Mailer:    mailer,
 			Banner:    banner,

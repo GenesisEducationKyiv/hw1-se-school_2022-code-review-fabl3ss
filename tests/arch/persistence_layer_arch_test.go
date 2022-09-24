@@ -6,13 +6,13 @@ import (
 )
 
 func TestArchCryptoExchangers(t *testing.T) {
-	archtest.Package(t, cryptoExchangersPackage).ShouldNotDependOn(
-		cryptoPackage,
-		cryptoChartsPackage,
-		cryptoBannersPackage,
-		mailingPackage,
-		storageCsvPackage,
-		storageRedisPackage,
+	archtest.Package(t, persistenceCryptoExchangersPackage).ShouldNotDependOn(
+		persistenceCryptoPackage,
+		persistenceCryptoChartsPackage,
+		persistenceCryptoBannersPackage,
+		persistenceMailingPackage,
+		persistenceStorageCsvPackage,
+		persistenceStorageRedisPackage,
 		gmailPlatformPackage,
 		httpRoutesPackage,
 		httpPresentersPackage,
@@ -21,13 +21,13 @@ func TestArchCryptoExchangers(t *testing.T) {
 }
 
 func TestArchCryptoBanners(t *testing.T) {
-	archtest.Package(t, cryptoBannersPackage).ShouldNotDependOn(
-		cryptoPackage,
-		cryptoChartsPackage,
-		cryptoExchangersPackage,
-		mailingPackage,
-		storageCsvPackage,
-		storageRedisPackage,
+	archtest.Package(t, persistenceCryptoBannersPackage).ShouldNotDependOn(
+		persistenceCryptoPackage,
+		persistenceCryptoChartsPackage,
+		persistenceCryptoExchangersPackage,
+		persistenceMailingPackage,
+		persistenceStorageCsvPackage,
+		persistenceStorageRedisPackage,
 		gmailPlatformPackage,
 		httpRoutesPackage,
 		httpPresentersPackage,
@@ -36,13 +36,13 @@ func TestArchCryptoBanners(t *testing.T) {
 }
 
 func TestArchCryptoCharts(t *testing.T) {
-	archtest.Package(t, cryptoBannersPackage).ShouldNotDependOn(
-		cryptoPackage,
-		cryptoBannersPackage,
-		cryptoExchangersPackage,
-		mailingPackage,
-		storageCsvPackage,
-		storageRedisPackage,
+	archtest.Package(t, persistenceCryptoBannersPackage).ShouldNotDependOn(
+		persistenceCryptoPackage,
+		persistenceCryptoBannersPackage,
+		persistenceCryptoExchangersPackage,
+		persistenceMailingPackage,
+		persistenceStorageCsvPackage,
+		persistenceStorageRedisPackage,
 		gmailPlatformPackage,
 		httpRoutesPackage,
 		httpPresentersPackage,
@@ -51,12 +51,12 @@ func TestArchCryptoCharts(t *testing.T) {
 }
 
 func TestArchMailing(t *testing.T) {
-	archtest.Package(t, mailingPackage).ShouldNotDependOn(
-		cryptoPackage,
-		cryptoBannersPackage,
-		cryptoExchangersPackage,
-		storageCsvPackage,
-		storageRedisPackage,
+	archtest.Package(t, persistenceMailingPackage).ShouldNotDependOn(
+		persistenceCryptoPackage,
+		persistenceCryptoBannersPackage,
+		persistenceCryptoExchangersPackage,
+		persistenceStorageCsvPackage,
+		persistenceStorageRedisPackage,
 		httpRoutesPackage,
 		httpPresentersPackage,
 		httpHandlersPackage,
@@ -64,12 +64,12 @@ func TestArchMailing(t *testing.T) {
 }
 
 func TestArchStorageCsv(t *testing.T) {
-	archtest.Package(t, storageCsvPackage).ShouldNotDependOn(
-		cryptoPackage,
-		cryptoBannersPackage,
-		cryptoExchangersPackage,
-		mailingPackage,
-		storageRedisPackage,
+	archtest.Package(t, persistenceStorageCsvPackage).ShouldNotDependOn(
+		persistenceCryptoPackage,
+		persistenceCryptoBannersPackage,
+		persistenceCryptoExchangersPackage,
+		persistenceMailingPackage,
+		persistenceStorageRedisPackage,
 		gmailPlatformPackage,
 		httpRoutesPackage,
 		httpPresentersPackage,
@@ -78,12 +78,12 @@ func TestArchStorageCsv(t *testing.T) {
 }
 
 func TestArchStorageRedis(t *testing.T) {
-	archtest.Package(t, storageCsvPackage).ShouldNotDependOn(
-		cryptoPackage,
-		cryptoBannersPackage,
-		cryptoExchangersPackage,
-		mailingPackage,
-		storageCsvPackage,
+	archtest.Package(t, persistenceStorageCsvPackage).ShouldNotDependOn(
+		persistenceCryptoPackage,
+		persistenceCryptoBannersPackage,
+		persistenceCryptoExchangersPackage,
+		persistenceMailingPackage,
+		persistenceStorageCsvPackage,
 		gmailPlatformPackage,
 		httpRoutesPackage,
 		httpPresentersPackage,
@@ -92,5 +92,5 @@ func TestArchStorageRedis(t *testing.T) {
 }
 
 func TestCryptoExchangersHaveTests(t *testing.T) {
-	archtest.Package(t, cryptoExchangersPackage).IncludeTests()
+	archtest.Package(t, persistenceCryptoExchangersPackage).IncludeTests()
 }

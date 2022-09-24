@@ -5,8 +5,8 @@
 package mock_usecase
 
 import (
+	"genesis_test_case/src/pkg/application"
 	"genesis_test_case/src/pkg/domain/models"
-	"genesis_test_case/src/pkg/domain/usecase"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -217,7 +217,7 @@ func (mr *MockExchangeProviderNodeMockRecorder) GetCurrencyRate(pair interface{}
 }
 
 // SetNext mocks base method.
-func (m *MockExchangeProviderNode) SetNext(exchanger usecase.ExchangeProviderNode) {
+func (m *MockExchangeProviderNode) SetNext(exchanger application.ExchangeProviderNode) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "SetNext", exchanger)
 }
@@ -252,10 +252,10 @@ func (m *MockExchangersChain) EXPECT() *MockExchangersChainMockRecorder {
 }
 
 // GetExchanger mocks base method.
-func (m *MockExchangersChain) GetExchanger(name string) usecase.ExchangeProvider {
+func (m *MockExchangersChain) GetExchanger(name string) application.ExchangeProvider {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetExchanger", name)
-	ret0, _ := ret[0].(usecase.ExchangeProvider)
+	ret0, _ := ret[0].(application.ExchangeProvider)
 	return ret0
 }
 
@@ -266,7 +266,7 @@ func (mr *MockExchangersChainMockRecorder) GetExchanger(name interface{}) *gomoc
 }
 
 // RegisterExchanger mocks base method.
-func (m *MockExchangersChain) RegisterExchanger(name string, exchanger, next usecase.ExchangeProviderNode) error {
+func (m *MockExchangersChain) RegisterExchanger(name string, exchanger, next application.ExchangeProviderNode) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RegisterExchanger", name, exchanger, next)
 	ret0, _ := ret[0].(error)

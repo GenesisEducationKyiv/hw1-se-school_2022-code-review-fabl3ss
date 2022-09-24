@@ -3,8 +3,8 @@ package mailing
 import (
 	"encoding/base64"
 	"fmt"
+	"genesis_test_case/src/pkg/application"
 	"genesis_test_case/src/pkg/domain/models"
-	"genesis_test_case/src/pkg/domain/usecase"
 	"log"
 	"os"
 
@@ -19,7 +19,7 @@ type mailingGmailRepository struct {
 	gmailService *gmail.Service
 }
 
-func NewGmailRepository(srv *gmail.Service) usecase.MailingRepository {
+func NewGmailRepository(srv *gmail.Service) application.MailingRepository {
 	return &mailingGmailRepository{
 		gmailService: srv,
 	}

@@ -2,15 +2,15 @@ package crypto
 
 import (
 	"genesis_test_case/src/loggers"
+	"genesis_test_case/src/pkg/application"
 	"genesis_test_case/src/pkg/domain/models"
-	"genesis_test_case/src/pkg/domain/usecase"
 )
 
 type cryptoLogger struct {
 	logger loggers.Logger
 }
 
-func NewCryptoLogger(logger loggers.Logger) usecase.CryptoLogger {
+func NewCryptoLogger(logger loggers.Logger) application.CryptoLogger {
 	return &cryptoLogger{
 		logger: logger,
 	}

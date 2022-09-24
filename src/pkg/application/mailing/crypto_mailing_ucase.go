@@ -1,23 +1,23 @@
 package usecase
 
 import (
-	"genesis_test_case/src/pkg/delivery/http"
+	"genesis_test_case/src/pkg/application"
 	"genesis_test_case/src/pkg/domain/models"
-	"genesis_test_case/src/pkg/domain/usecase"
+	"genesis_test_case/src/pkg/domain/usecases"
 	"genesis_test_case/src/pkg/utils"
 )
 
 type cryptoMailingUsecase struct {
 	pair             *models.CurrencyPair
-	repos            *usecase.CryptoMailingRepositories
+	repos            *application.CryptoMailingRepositories
 	templatePathHTML string
 }
 
 func NewCryptoMailingUsecase(
 	htmlPath string,
 	pair *models.CurrencyPair,
-	repos *usecase.CryptoMailingRepositories,
-) http.CryptoMailingUsecase {
+	repos *application.CryptoMailingRepositories,
+) usecases.CryptoMailingUsecase {
 	return &cryptoMailingUsecase{
 		pair:             pair,
 		repos:            repos,

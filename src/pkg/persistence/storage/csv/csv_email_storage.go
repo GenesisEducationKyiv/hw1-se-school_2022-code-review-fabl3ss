@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"genesis_test_case/src/pkg/domain/usecase"
+	"genesis_test_case/src/pkg/application"
 	"genesis_test_case/src/pkg/utils"
 )
 
@@ -9,7 +9,7 @@ type csvEmailStorage struct {
 	csvPath string
 }
 
-func NewCsvEmaiStorage(path string) usecase.EmailStorage {
+func NewCsvEmaiStorage(path string) application.EmailStorage {
 	return &csvEmailStorage{
 		csvPath: path,
 	}

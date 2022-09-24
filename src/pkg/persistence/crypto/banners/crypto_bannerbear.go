@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"genesis_test_case/src/pkg/application"
 	"genesis_test_case/src/pkg/domain/models"
-	"genesis_test_case/src/pkg/domain/usecase"
 	"log"
 	"net/http"
 	"os"
@@ -38,7 +38,7 @@ type bannerBearProvider struct {
 
 type BannerBearProviderFactory struct{}
 
-func (factory BannerBearProviderFactory) CreateBannerProvider() usecase.CryptoBannerProvider {
+func (factory BannerBearProviderFactory) CreateBannerProvider() application.CryptoBannerProvider {
 	return &bannerBearProvider{
 		apiEndpoint: "https://api.bannerbear.com/v2/images",
 		bearer:      os.Getenv(config.EnvBannerApiToken),

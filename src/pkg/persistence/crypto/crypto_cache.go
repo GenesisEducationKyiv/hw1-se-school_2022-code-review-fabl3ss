@@ -2,15 +2,15 @@ package crypto
 
 import (
 	"encoding/json"
+	"genesis_test_case/src/pkg/application"
 	"genesis_test_case/src/pkg/domain/models"
-	"genesis_test_case/src/pkg/domain/usecase"
 )
 
 type cryptoCache struct {
-	cacheProvider usecase.Cache
+	cacheProvider application.Cache
 }
 
-func NewCryptoCache(cache usecase.Cache) usecase.CryptoCache {
+func NewCryptoCache(cache application.Cache) application.CryptoCache {
 	return &cryptoCache{
 		cacheProvider: cache,
 	}

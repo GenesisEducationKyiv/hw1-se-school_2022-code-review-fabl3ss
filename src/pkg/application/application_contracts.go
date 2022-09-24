@@ -1,4 +1,4 @@
-package usecase
+package application
 
 import (
 	"genesis_test_case/src/pkg/domain/models"

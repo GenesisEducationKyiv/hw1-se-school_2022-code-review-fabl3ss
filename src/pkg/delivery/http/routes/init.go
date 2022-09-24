@@ -3,14 +3,15 @@ package routes
 import (
 	"genesis_test_case/src/config"
 	"genesis_test_case/src/loggers"
+	"genesis_test_case/src/pkg/application"
+	exchangeUsecase "genesis_test_case/src/pkg/application/exchange"
+	mailingUsecase "genesis_test_case/src/pkg/application/mailing"
+	subscriptionUsecase "genesis_test_case/src/pkg/application/subscription"
 	"genesis_test_case/src/pkg/delivery/http"
 	"genesis_test_case/src/pkg/delivery/http/middleware"
 	"genesis_test_case/src/pkg/delivery/http/presenters"
 	"genesis_test_case/src/pkg/domain/models"
-	"genesis_test_case/src/pkg/domain/usecase"
-	usecase2 "genesis_test_case/src/pkg/domain/usecase/exchange"
-	mailingUsecase "genesis_test_case/src/pkg/domain/usecase/mailing"
-	subscriptionUsecase "genesis_test_case/src/pkg/domain/usecase/subscription"
+	"genesis_test_case/src/pkg/domain/usecases"
 	"genesis_test_case/src/pkg/persistence/crypto"
 	"genesis_test_case/src/pkg/persistence/crypto/banners"
 	"genesis_test_case/src/pkg/persistence/crypto/charts"
@@ -31,11 +32,11 @@ func InitRoutes(app *fiber.App) error {
 	if err != nil {
 		return err
 	}
-	usecases, err := createUsecases(repos)
+	ucases, err := createUsecases(repos)
 	if err != nil {
 		return err
 	}
-	handlers, err := createHandlers(usecases)
+	handlers, err := createHandlers(ucases)
 	if err != nil {
 		return err
 	}
@@ -46,9 +47,8 @@ func InitRoutes(app *fiber.App) error {
 	return nil
 }
 
-func createHandlers(usecases *http.Usecases) (*Handlers, error) {
+func createHandlers(usecases *usecases.Usecases) (*Handlers, error) {
 	cryptoMailingUsecases := &http.CryptoMailingUsecases{
-		Exchange:     usecases.CryptoExchanger,
 		Mailing:      usecases.CryptoMailing,
 		Subscription: usecases.Subscription,
 	}
@@ -62,8 +62,8 @@ func createHandlers(usecases *http.Usecases) (*Handlers, error) {
 	}, nil
 }
 
-func createUsecases(repos *usecase.Repositories) (*http.Usecases, error) {
-	cryptoMailingRepositories := &usecase.CryptoMailingRepositories{
+func createUsecases(repos *application.Repositories) (*usecases.Usecases, error) {
+	cryptoMailingRepositories := &application.CryptoMailingRepositories{
 		Repositories: *repos,
 	}
 	BTCUAHPair := models.NewCurrencyPair(
@@ -83,7 +83,7 @@ func createUsecases(repos *usecase.Repositories) (*http.Usecases, error) {
 
 	configuredExchanger := getConfiguredExchanger()
 
-	cryptoExchangeUsecase := usecase2.NewCryptoExchangeUsecase(
+	cryptoExchangeUsecase := exchangeUsecase.NewCryptoExchangeUsecase(
 		configuredExchanger,
 		cryptoCache,
 	)
@@ -92,14 +92,14 @@ func createUsecases(repos *usecase.Repositories) (*http.Usecases, error) {
 		repos.Storage,
 	)
 
-	return &http.Usecases{
+	return &usecases.Usecases{
 		Subscription:    subscriptionUsecase,
 		CryptoMailing:   cryptoMailingBecause,
 		CryptoExchanger: cryptoExchangeUsecase,
 	}, nil
 }
 
-func setupCryptoCache() (usecase.CryptoCache, error) {
+func setupCryptoCache() (application.CryptoCache, error) {
 	cryptoCacheDB, err := strconv.Atoi(os.Getenv(config.CryptoCacheDB))
 	if err != nil {
 		return nil, err
@@ -119,7 +119,7 @@ func setupCryptoCache() (usecase.CryptoCache, error) {
 	return crypto.NewCryptoCache(cacheProvider), nil
 }
 
-func createRepositories() (*usecase.Repositories, error) {
+func createRepositories() (*application.Repositories, error) {
 	gmailService, err := gmail_api.GetGmailService()
 	if err != nil {
 		return nil, err
@@ -129,7 +129,7 @@ func createRepositories() (*usecase.Repositories, error) {
 	cryptobannerBearProvidersitory := banners.BannerBearProviderFactory{}.CreateBannerProvider()
 	exchangeProvider := exchangers.CoinApiProviderFactory{}.CreateExchangeProvider()
 	chartProvider := charts.CoinbaseProviderFactory{}.CreateChartProvider()
-	return &usecase.Repositories{
+	return &application.Repositories{
 		Banner:    cryptobannerBearProvidersitory,
 		Storage:   csvStorage,
 		Mailer:    mailingGmailRepository,
@@ -138,7 +138,7 @@ func createRepositories() (*usecase.Repositories, error) {
 	}, nil
 }
 
-func getConfiguredExchanger() usecase.ExchangeProvider {
+func getConfiguredExchanger() application.ExchangeProvider {
 	logger := loggers.NewZapLogger(os.Getenv(config.EnvLogPath))
 	cryptoLogger := crypto.NewCryptoLogger(logger)
 
@@ -154,7 +154,7 @@ func getConfiguredExchanger() usecase.ExchangeProvider {
 	coinbaseExchangerNode := exchangers.NewExchangerNode(loggingCoinbaseExchanger)
 	nomicsExchangerNode := exchangers.NewExchangerNode(loggingNomicsExchanger)
 
-	chain := usecase2.NewExchangersChain()
+	chain := exchangeUsecase.NewExchangersChain()
 	chain.RegisterExchanger(
 		config.CoinAPIExchangerName,
 		coinapiExchangerNode,

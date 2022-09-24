@@ -3,15 +3,16 @@ package http
 import (
 	"errors"
 	"genesis_test_case/src/pkg/delivery/http/middleware"
+	"genesis_test_case/src/pkg/delivery/http/responses"
 	"genesis_test_case/src/pkg/domain/models"
+	"genesis_test_case/src/pkg/domain/usecases"
 	myerr "genesis_test_case/src/pkg/types/errors"
 	"github.com/gofiber/fiber/v2"
 )
 
 type CryptoMailingUsecases struct {
-	Exchange     CryptoExchangerUsecase
-	Mailing      CryptoMailingUsecase
-	Subscription SubscriptionUsecase
+	Mailing      usecases.CryptoMailingUsecase
+	Subscription usecases.SubscriptionUsecase
 }
 
 type MailingHandler struct {
@@ -34,7 +35,7 @@ func (m *MailingHandler) SendRate(c *fiber.Ctx) error {
 
 	if len(unsent) > 0 {
 		return m.presenter.PresentSendRate(c,
-			&SendRateResponse{
+			&responses.SendRateResponse{
 				UnsentEmails: unsent,
 			},
 		)
@@ -57,7 +58,7 @@ func (m *MailingHandler) Subscribe(c *fiber.Ctx) error {
 			return c.SendStatus(fiber.StatusConflict)
 		}
 		return m.presenter.PresentError(c,
-			&ErrorResponse{
+			&responses.ErrorResponse{
 				Error:   true,
 				Message: err.Error(),
 			},

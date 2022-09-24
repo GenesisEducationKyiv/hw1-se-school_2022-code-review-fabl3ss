@@ -2,8 +2,8 @@ package charts
 
 import (
 	"fmt"
+	"genesis_test_case/src/pkg/application"
 	"genesis_test_case/src/pkg/domain/models"
-	"genesis_test_case/src/pkg/domain/usecase"
 	"genesis_test_case/src/pkg/utils"
 	"strconv"
 	"time"
@@ -11,7 +11,7 @@ import (
 
 type CoinbaseProviderFactory struct{}
 
-func (factory CoinbaseProviderFactory) CreateChartProvider() usecase.ChartProvider {
+func (factory CoinbaseProviderFactory) CreateChartProvider() application.ChartProvider {
 	return &coinbaseChartProvider{
 		chartTemplateUrl: "https://api.exchange.coinbase.com/products/%s-USDT/candles?granularity=%s&start=%s&end=%s",
 	}

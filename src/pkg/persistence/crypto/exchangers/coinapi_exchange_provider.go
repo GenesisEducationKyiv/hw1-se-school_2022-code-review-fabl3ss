@@ -3,8 +3,8 @@ package exchangers
 import (
 	"fmt"
 	"genesis_test_case/src/config"
+	"genesis_test_case/src/pkg/application"
 	"genesis_test_case/src/pkg/domain/models"
-	"genesis_test_case/src/pkg/domain/usecase"
 	"genesis_test_case/src/pkg/utils"
 	"net/http"
 	"os"
@@ -12,7 +12,7 @@ import (
 
 type CoinApiProviderFactory struct{}
 
-func (factory CoinApiProviderFactory) CreateExchangeProvider() usecase.ExchangeProvider {
+func (factory CoinApiProviderFactory) CreateExchangeProvider() application.ExchangeProvider {
 	return &coinApiExchangeProvider{
 		apiKey:              os.Getenv(config.EnvCoinAPIKey),
 		apiKeyHeader:        "X-CoinAPI-Key",

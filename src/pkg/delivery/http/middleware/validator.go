@@ -3,7 +3,7 @@ package middleware
 import (
 	"bytes"
 	"fmt"
-	"genesis_test_case/src/pkg/delivery/http"
+	"genesis_test_case/src/pkg/delivery/http/responses"
 	"genesis_test_case/src/pkg/types/errors"
 
 	"github.com/go-playground/validator/v10"
@@ -39,16 +39,16 @@ func ValidateStruct(payload interface{}) (string, error) {
 	return "", nil
 }
 
-func ParseAndValidate(c *fiber.Ctx, payload interface{}) (*http.ErrorResponse, error) {
+func ParseAndValidate(c *fiber.Ctx, payload interface{}) (*responses.ErrorResponse, error) {
 	if err := c.BodyParser(payload); err != nil {
-		return &http.ErrorResponse{
+		return &responses.ErrorResponse{
 			Error:   true,
 			Message: err.Error(),
 		}, errors.ErrFailedParseHttpBody
 	}
 
 	if msg, err := ValidateStruct(payload); err != nil {
-		return &http.ErrorResponse{
+		return &responses.ErrorResponse{
 			Error:   true,
 			Message: msg,
 		}, err

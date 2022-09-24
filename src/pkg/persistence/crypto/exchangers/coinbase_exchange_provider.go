@@ -2,15 +2,14 @@ package exchangers
 
 import (
 	"fmt"
+	"genesis_test_case/src/pkg/application"
 	"genesis_test_case/src/pkg/domain/models"
-	"genesis_test_case/src/pkg/domain/usecase"
-
 	"genesis_test_case/src/pkg/utils"
 )
 
 type CoinbaseProviderFactory struct{}
 
-func (factory CoinbaseProviderFactory) CreateExchangeProvider() usecase.ExchangeProvider {
+func (factory CoinbaseProviderFactory) CreateExchangeProvider() application.ExchangeProvider {
 	return &coinbaseExchangeProvider{
 		exchangeTemplateUrl: "https://api.coinbase.com/v2/prices/%s-%s/spot",
 	}

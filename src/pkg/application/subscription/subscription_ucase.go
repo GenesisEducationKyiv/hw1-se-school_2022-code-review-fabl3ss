@@ -1,17 +1,17 @@
 package usecase
 
 import (
-	"genesis_test_case/src/pkg/delivery/http"
+	"genesis_test_case/src/pkg/application"
 	"genesis_test_case/src/pkg/domain/models"
-	"genesis_test_case/src/pkg/domain/usecase"
+	"genesis_test_case/src/pkg/domain/usecases"
 	myerr "genesis_test_case/src/pkg/types/errors"
 )
 
 type subscriptionUsecase struct {
-	storage usecase.EmailStorage
+	storage application.EmailStorage
 }
 
-func NewSubscriptionUsecase(storage usecase.EmailStorage) http.SubscriptionUsecase {
+func NewSubscriptionUsecase(storage application.EmailStorage) usecases.SubscriptionUsecase {
 	return &subscriptionUsecase{
 		storage: storage,
 	}
