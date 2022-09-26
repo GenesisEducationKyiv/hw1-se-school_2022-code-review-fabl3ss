@@ -10,7 +10,9 @@ import (
 
 func TestValidateStruct(t *testing.T) {
 	input := &models.Recipient{
-		Email: "test@test.com",
+		Email: models.EmailAddress{
+			Address: "test@test.com",
+		},
 	}
 	_, err := ValidateStruct(input)
 	require.NoError(t, err)
@@ -30,7 +32,9 @@ func TestValidateStructError(t *testing.T) {
 		{
 			testName: "bad_email",
 			input: &models.Recipient{
-				Email: "testemail123",
+				Email: models.EmailAddress{
+					Address: "testemail123",
+				},
 			},
 			expectedErr: errors.ErrValidationFailed,
 		},

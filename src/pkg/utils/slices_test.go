@@ -17,9 +17,18 @@ func TestInsertToSorted(t *testing.T) {
 			inputToFind: "ball",
 		},
 	}
+	cmp := func(a string, b string) int {
+		if a == b {
+			return 0
+		}
+		if a < b {
+			return -1
+		}
+		return 1
+	}
 
 	for _, tcase := range testCases {
-		s, err := InsertToSorted(tcase.inputSlice, tcase.inputToFind)
+		s, err := InsertToSorted(tcase.inputSlice, tcase.inputToFind, cmp)
 		require.NoError(t, err)
 		require.IsIncreasing(t, s)
 	}
@@ -39,10 +48,19 @@ func TestInsertToSortedError(t *testing.T) {
 			expErr:      errors.ErrAlreadyExists,
 		},
 	}
+	cmp := func(a string, b string) int {
+		if a == b {
+			return 0
+		}
+		if a < b {
+			return -1
+		}
+		return 1
+	}
 
 	for _, tcase := range testCases {
 		t.Run(tcase.name, func(t *testing.T) {
-			_, err := InsertToSorted(tcase.inputSlice, tcase.inputToFind)
+			_, err := InsertToSorted(tcase.inputSlice, tcase.inputToFind, cmp)
 			require.EqualError(t, tcase.expErr, err.Error())
 		})
 	}

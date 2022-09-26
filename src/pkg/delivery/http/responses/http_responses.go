@@ -1,12 +1,14 @@
 package responses
 
+import "genesis_test_case/src/pkg/domain/models"
+
 type ErrorResponse struct {
 	Error   bool   `json:"error"`
 	Message string `json:"msg"`
 }
 
 type SendRateResponse struct {
-	UnsentEmails []string `json:"unsent"`
+	UnsentEmails []models.EmailAddress `json:"unsent"`
 }
 
 type RateResponse struct {

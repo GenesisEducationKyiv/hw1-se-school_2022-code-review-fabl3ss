@@ -25,9 +25,12 @@ func NewGmailRepository(srv *gmail.Service) application.MailingRepository {
 	}
 }
 
-func (m *mailingGmailRepository) MultipleSending(msg *models.EmailMessage, recipients []string) ([]string, error) {
+func (m *mailingGmailRepository) MultipleSending(
+	msg *models.EmailMessage,
+	recipients []models.EmailAddress,
+) ([]models.EmailAddress, error) {
 	var (
-		unsent  []string
+		unsent  []models.EmailAddress
 		message gmail.Message
 	)
 

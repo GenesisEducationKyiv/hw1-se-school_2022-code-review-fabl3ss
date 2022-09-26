@@ -2,20 +2,16 @@ package utils
 
 import (
 	"genesis_test_case/src/pkg/types/errors"
-	"sort"
+	"golang.org/x/exp/slices"
 )
 
-func InsertToSorted(s []string, toInsert string) ([]string, error) {
-	index := sort.SearchStrings(s, toInsert)
-	if index != len(s) {
-		if s[index] == toInsert {
-			return nil, errors.ErrAlreadyExists
-		}
+func InsertToSorted[T any](array []T, value T, cmp func(T, T) int) ([]T, error) {
+	pos, isFound := slices.BinarySearchFunc(array, value, cmp)
+	if isFound {
+		return nil, errors.ErrAlreadyExists
 	}
 
-	s = append(s, "")
-	copy(s[index+1:], s[index:])
-	s[index] = toInsert
+	slices.Insert(array, pos, value)
 
-	return s, nil
+	return array, nil
 }

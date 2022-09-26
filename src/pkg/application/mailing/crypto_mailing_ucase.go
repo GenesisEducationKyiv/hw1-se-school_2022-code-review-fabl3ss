@@ -25,7 +25,7 @@ func NewCryptoMailingUsecase(
 	}
 }
 
-func (c *cryptoMailingUsecase) SendCurrencyRate() ([]string, error) {
+func (c *cryptoMailingUsecase) SendCurrencyRate() ([]models.EmailAddress, error) {
 	bannerURL, err := c.getMailingBannerUrl()
 	if err != nil {
 		return nil, err
@@ -38,7 +38,7 @@ func (c *cryptoMailingUsecase) SendCurrencyRate() ([]string, error) {
 	return c.sendToSubscribed(messageBody)
 }
 
-func (c *cryptoMailingUsecase) sendToSubscribed(message *models.EmailMessage) ([]string, error) {
+func (c *cryptoMailingUsecase) sendToSubscribed(message *models.EmailMessage) ([]models.EmailAddress, error) {
 	recipients, err := c.repos.Storage.GetAllEmails()
 	if err != nil {
 		return nil, err

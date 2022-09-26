@@ -1,5 +1,7 @@
 package usecases
 
+import "genesis_test_case/src/pkg/domain/models"
+
 type CryptoMailingUsecase interface {
-	SendCurrencyRate() ([]string, error)
+	SendCurrencyRate() ([]models.EmailAddress, error)
 }

@@ -44,7 +44,9 @@ func TestSendCurrencyRate(t *testing.T) {
 		BTCUAHPair,
 		mockRepos,
 	)
-	mockStorageResp := []string{"example@example.com"}
+	mockStorageResp := []models.EmailAddress{
+		{Address: "example@example.com"},
+	}
 	mockCryptoChartResp := []float64{0.0, 0.1, 0.2}
 	mockCryptoRateResp := &models.CurrencyRate{}
 	mockBannerResp := "http://example.com/example"

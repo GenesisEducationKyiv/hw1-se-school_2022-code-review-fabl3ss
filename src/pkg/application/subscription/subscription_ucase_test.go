@@ -18,7 +18,9 @@ func TestSubscribe(t *testing.T) {
 		mockStorage,
 	)
 	recipient := &models.Recipient{
-		Email: "test@test.com",
+		Email: models.EmailAddress{
+			Address: "test@test.com",
+		},
 	}
 
 	mockStorage.EXPECT().AddEmail(recipient.Email).Return(nil)
@@ -34,7 +36,9 @@ func TestSubscribeError(t *testing.T) {
 		mockStorage,
 	)
 	recipient := &models.Recipient{
-		Email: "test@test.com",
+		Email: models.EmailAddress{
+			Address: "test@test.com",
+		},
 	}
 
 	mockStorage.EXPECT().AddEmail(recipient.Email).Return(myerr.ErrAlreadyExists)

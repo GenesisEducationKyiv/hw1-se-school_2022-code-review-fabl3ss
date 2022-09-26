@@ -5,12 +5,12 @@ import (
 )
 
 type MailingRepository interface {
-	MultipleSending(message *models.EmailMessage, adresses []string) ([]string, error)
+	MultipleSending(message *models.EmailMessage, address []models.EmailAddress) ([]models.EmailAddress, error)
 }
 
 type EmailStorage interface {
-	GetAllEmails() ([]string, error)
-	AddEmail(email string) error
+	GetAllEmails() ([]models.EmailAddress, error)
+	AddEmail(email models.EmailAddress) error
 }
 
 type ExchangeProvider interface {
