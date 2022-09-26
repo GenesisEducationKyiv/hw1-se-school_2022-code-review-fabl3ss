@@ -16,7 +16,7 @@ func (factory CoinApiProviderFactory) CreateExchangeProvider() application.Excha
 	return &coinApiExchangeProvider{
 		apiKey:              os.Getenv(config.EnvCoinAPIKey),
 		apiKeyHeader:        "X-CoinAPI-Key",
-		exchangeTemplateUrl: "https://rest.coinapi.io/v1/exchangerate/%v/%v",
+		exchangeTemplateUrl: config.CoinAPIExchangerTemplateURL,
 	}
 }
 

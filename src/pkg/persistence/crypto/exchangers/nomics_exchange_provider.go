@@ -14,7 +14,7 @@ type NomicsProviderFactory struct{}
 
 func (factory NomicsProviderFactory) CreateExchangeProvider() application.ExchangeProvider {
 	return &nomicsExchangeProvider{
-		exchangeTemplateUrl: "https://api.nomics.com/v1/currencies/ticker?key=%v&ids=%v&interval=1d&convert=%v",
+		exchangeTemplateUrl: config.NomicsExchangerTemplateURL,
 		apiKey:              os.Getenv(config.EnvNomicsApiKey),
 	}
 }
