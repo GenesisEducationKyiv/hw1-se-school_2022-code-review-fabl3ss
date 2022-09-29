@@ -5,8 +5,10 @@ import (
 	"testing"
 )
 
-func TestArchHttpHandlers(t *testing.T) {
-	archtest.Package(t, httpHandlersPackage).ShouldNotDependOn(
-		httpPresentersPackage,
+func TestArchPresentationLayer(t *testing.T) {
+	archtest.Package(t, presentationLayer).ShouldNotDependDirectlyOn(
+		platformLayer,
+		applicationLayer,
+		persistenceLayer,
 	)
 }

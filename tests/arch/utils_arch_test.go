@@ -7,24 +7,13 @@ import (
 
 func TestUtilsHaveNoDependencies(t *testing.T) {
 	archtest.Package(t, utilsPackage).ShouldNotDependOn(
-		modelsPackage,
-		applicationPackage,
-		applicationExchangePackage,
-		applicationMailingPackage,
-		applicationSubscriptionPackage,
-		httpHandlersPackage,
-		httpRoutesPackage,
-		httpPresentersPackage,
-		persistenceCryptoBannersPackage,
-		persistenceCryptoExchangersPackage,
-		persistenceCryptoChartsPackage,
-		persistenceCryptoPackage,
-		persistenceMailingPackage,
-		persistenceStorageCsvPackage,
-		persistenceStorageRedisPackage,
-		loggersPackage,
+		domainLayer,
+		platformLayer,
 		configPackage,
-		gmailPlatformPackage,
+		loggersPackage,
+		applicationLayer,
+		persistenceLayer,
+		presentationLayer,
 	)
 }
 

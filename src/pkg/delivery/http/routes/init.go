@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"genesis_test_case/src/pkg/delivery/api"
+	"genesis_test_case/src/pkg/api"
 	"genesis_test_case/src/pkg/delivery/http"
 	"genesis_test_case/src/pkg/delivery/http/middleware"
 	"genesis_test_case/src/pkg/delivery/http/presenters"

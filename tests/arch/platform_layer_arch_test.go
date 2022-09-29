@@ -5,11 +5,11 @@ import (
 	"testing"
 )
 
-func TestDomainLayerHaveNoDependencies(t *testing.T) {
+func TestPlatformLayerHaveNoDependencies(t *testing.T) {
 	archtest.Package(t, domainLayer).ShouldNotDependOn(
 		utilsPackage,
 		configPackage,
-		platformLayer,
+		domainLayer,
 		loggersPackage,
 		applicationLayer,
 		persistenceLayer,
