@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"genesis_test_case/src/pkg/application"
 	myerr "genesis_test_case/src/pkg/types/errors"
-	"genesis_test_case/src/pkg/usecase"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -16,7 +16,7 @@ type redisCache struct {
 	client  *redis.Client
 }
 
-func NewRedisCache(host string, db int, exp time.Duration) usecase.Cache {
+func NewRedisCache(host string, db int, exp time.Duration) application.Cache {
 	return &redisCache{
 		client:  getRedisClient(host, db),
 		expires: exp,

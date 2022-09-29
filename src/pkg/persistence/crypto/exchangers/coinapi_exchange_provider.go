@@ -3,8 +3,8 @@ package exchangers
 import (
 	"fmt"
 	"genesis_test_case/src/config"
-	"genesis_test_case/src/pkg/domain"
-	"genesis_test_case/src/pkg/usecase"
+	"genesis_test_case/src/pkg/application"
+	"genesis_test_case/src/pkg/domain/models"
 	"genesis_test_case/src/pkg/utils"
 	"net/http"
 	"os"
@@ -12,11 +12,11 @@ import (
 
 type CoinApiProviderFactory struct{}
 
-func (factory CoinApiProviderFactory) CreateExchangeProvider() usecase.ExchangeProvider {
+func (factory CoinApiProviderFactory) CreateExchangeProvider() application.ExchangeProvider {
 	return &coinApiExchangeProvider{
 		apiKey:              os.Getenv(config.EnvCoinAPIKey),
 		apiKeyHeader:        "X-CoinAPI-Key",
-		exchangeTemplateUrl: "https://rest.coinapi.io/v1/exchangerate/%v/%v",
+		exchangeTemplateUrl: config.CoinAPIExchangerTemplateURL,
 	}
 }
 
@@ -26,7 +26,7 @@ type coinApiExchangeProvider struct {
 	exchangeTemplateUrl string
 }
 
-func (c *coinApiExchangeProvider) GetCurrencyRate(pair *domain.CurrencyPair) (*domain.CurrencyRate, error) {
+func (c *coinApiExchangeProvider) GetCurrencyRate(pair *models.CurrencyPair) (*models.CurrencyRate, error) {
 	resp, err := c.makeAPIRequest(pair)
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func (c *coinApiExchangeProvider) GetCurrencyRate(pair *domain.CurrencyPair) (*d
 	return resp.toDefaultRate(), nil
 }
 
-func (c *coinApiExchangeProvider) makeAPIRequest(pair *domain.CurrencyPair) (*coinAPIExchangerResponse, error) {
+func (c *coinApiExchangeProvider) makeAPIRequest(pair *models.CurrencyPair) (*coinAPIExchangerResponse, error) {
 	url := fmt.Sprintf(
 		c.exchangeTemplateUrl,
 		pair.GetBaseCurrency(),
@@ -63,10 +63,10 @@ type coinAPIExchangerResponse struct {
 	Rate          float64 `json:"rate"`
 }
 
-func (c *coinAPIExchangerResponse) toDefaultRate() *domain.CurrencyRate {
-	return &domain.CurrencyRate{
+func (c *coinAPIExchangerResponse) toDefaultRate() *models.CurrencyRate {
+	return &models.CurrencyRate{
 		Price: c.Rate,
-		CurrencyPair: *domain.NewCurrencyPair(
+		CurrencyPair: *models.NewCurrencyPair(
 			c.BaseCurrency,
 			c.QuoteCurrency,
 		),

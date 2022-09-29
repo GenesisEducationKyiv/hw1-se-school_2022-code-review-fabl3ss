@@ -1,24 +1,24 @@
 package exchangers
 
 import (
-	"genesis_test_case/src/pkg/domain"
-	"genesis_test_case/src/pkg/usecase"
+	"genesis_test_case/src/pkg/application"
+	"genesis_test_case/src/pkg/domain/models"
 	"reflect"
 )
 
 type loggingExchanger struct {
-	exchanger usecase.ExchangeProvider
-	logger    usecase.CryptoLogger
+	exchanger application.ExchangeProvider
+	logger    application.CryptoLogger
 }
 
-func NewLoggingExchanger(exc usecase.ExchangeProvider, log usecase.CryptoLogger) *loggingExchanger {
+func NewLoggingExchanger(exc application.ExchangeProvider, log application.CryptoLogger) *loggingExchanger {
 	return &loggingExchanger{
 		exchanger: exc,
 		logger:    log,
 	}
 }
 
-func (l *loggingExchanger) GetCurrencyRate(pair *domain.CurrencyPair) (*domain.CurrencyRate, error) {
+func (l *loggingExchanger) GetCurrencyRate(pair *models.CurrencyPair) (*models.CurrencyRate, error) {
 	rate, err := l.exchanger.GetCurrencyRate(pair)
 	if err != nil {
 		return nil, err

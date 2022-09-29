@@ -3,8 +3,8 @@ package exchangers
 import (
 	"fmt"
 	"genesis_test_case/src/config"
-	"genesis_test_case/src/pkg/domain"
-	"genesis_test_case/src/pkg/usecase"
+	"genesis_test_case/src/pkg/application"
+	"genesis_test_case/src/pkg/domain/models"
 	"genesis_test_case/src/pkg/utils"
 	"net/http"
 	"os"
@@ -12,9 +12,9 @@ import (
 
 type NomicsProviderFactory struct{}
 
-func (factory NomicsProviderFactory) CreateExchangeProvider() usecase.ExchangeProvider {
+func (factory NomicsProviderFactory) CreateExchangeProvider() application.ExchangeProvider {
 	return &nomicsExchangeProvider{
-		exchangeTemplateUrl: "https://api.nomics.com/v1/currencies/ticker?key=%v&ids=%v&interval=1d&convert=%v",
+		exchangeTemplateUrl: config.NomicsExchangerTemplateURL,
 		apiKey:              os.Getenv(config.EnvNomicsApiKey),
 	}
 }
@@ -24,7 +24,7 @@ type nomicsExchangeProvider struct {
 	apiKey              string
 }
 
-func (n *nomicsExchangeProvider) GetCurrencyRate(pair *domain.CurrencyPair) (*domain.CurrencyRate, error) {
+func (n *nomicsExchangeProvider) GetCurrencyRate(pair *models.CurrencyPair) (*models.CurrencyRate, error) {
 	resp, err := n.makeAPIRequest(pair)
 	if err != nil {
 		return nil, err
@@ -33,7 +33,7 @@ func (n *nomicsExchangeProvider) GetCurrencyRate(pair *domain.CurrencyPair) (*do
 	return resp.toDefaultRate(pair.GetQuoteCurrency())
 }
 
-func (n *nomicsExchangeProvider) makeAPIRequest(pair *domain.CurrencyPair) (*nomicsExchangerResponse, error) {
+func (n *nomicsExchangeProvider) makeAPIRequest(pair *models.CurrencyPair) (*nomicsExchangerResponse, error) {
 	url := fmt.Sprintf(
 		n.exchangeTemplateUrl,
 		n.apiKey,
@@ -59,14 +59,14 @@ type nomicsExchangerResponse struct {
 	Price  string `json:"price"`
 }
 
-func (c *nomicsExchangerResponse) toDefaultRate(quote string) (*domain.CurrencyRate, error) {
+func (c *nomicsExchangerResponse) toDefaultRate(quote string) (*models.CurrencyRate, error) {
 	floatPrice, err := utils.StringToFloat64(c.Price)
 	if err != nil {
 		return nil, err
 	}
-	return &domain.CurrencyRate{
+	return &models.CurrencyRate{
 		Price: floatPrice,
-		CurrencyPair: *domain.NewCurrencyPair(
+		CurrencyPair: *models.NewCurrencyPair(
 			c.Symbol,
 			quote,
 		),

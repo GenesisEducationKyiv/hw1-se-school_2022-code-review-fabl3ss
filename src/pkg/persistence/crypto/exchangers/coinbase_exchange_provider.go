@@ -2,17 +2,17 @@ package exchangers
 
 import (
 	"fmt"
-
-	"genesis_test_case/src/pkg/domain"
-	"genesis_test_case/src/pkg/usecase"
+	"genesis_test_case/src/config"
+	"genesis_test_case/src/pkg/application"
+	"genesis_test_case/src/pkg/domain/models"
 	"genesis_test_case/src/pkg/utils"
 )
 
 type CoinbaseProviderFactory struct{}
 
-func (factory CoinbaseProviderFactory) CreateExchangeProvider() usecase.ExchangeProvider {
+func (factory CoinbaseProviderFactory) CreateExchangeProvider() application.ExchangeProvider {
 	return &coinbaseExchangeProvider{
-		exchangeTemplateUrl: "https://api.coinbase.com/v2/prices/%s-%s/spot",
+		exchangeTemplateUrl: config.CoinbaseExchangerTemplateURL,
 	}
 }
 
@@ -20,7 +20,7 @@ type coinbaseExchangeProvider struct {
 	exchangeTemplateUrl string
 }
 
-func (c *coinbaseExchangeProvider) GetCurrencyRate(pair *domain.CurrencyPair) (*domain.CurrencyRate, error) {
+func (c *coinbaseExchangeProvider) GetCurrencyRate(pair *models.CurrencyPair) (*models.CurrencyRate, error) {
 	resp, err := c.makeAPIRequest(pair)
 	if err != nil {
 		return nil, err
@@ -29,7 +29,7 @@ func (c *coinbaseExchangeProvider) GetCurrencyRate(pair *domain.CurrencyPair) (*
 	return resp.toDefaultRate()
 }
 
-func (c *coinbaseExchangeProvider) makeAPIRequest(pair *domain.CurrencyPair) (*coinbaseExchangerResponse, error) {
+func (c *coinbaseExchangeProvider) makeAPIRequest(pair *models.CurrencyPair) (*coinbaseExchangerResponse, error) {
 	url := fmt.Sprintf(
 		c.exchangeTemplateUrl,
 		pair.GetBaseCurrency(),
@@ -55,15 +55,15 @@ type coinbaseExchangerResponse struct {
 	coinbaseCurrencyRate `json:"data"`
 }
 
-func (c *coinbaseCurrencyRate) toDefaultRate() (*domain.CurrencyRate, error) {
+func (c *coinbaseCurrencyRate) toDefaultRate() (*models.CurrencyRate, error) {
 	floatPrice, err := utils.StringToFloat64(c.Amount)
 	if err != nil {
 		return nil, err
 	}
 
-	return &domain.CurrencyRate{
+	return &models.CurrencyRate{
 		Price: floatPrice,
-		CurrencyPair: *domain.NewCurrencyPair(
+		CurrencyPair: *models.NewCurrencyPair(
 			c.BaseCurrency,
 			c.QuoteCurrency,
 		),

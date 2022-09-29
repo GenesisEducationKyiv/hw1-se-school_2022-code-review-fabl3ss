@@ -2,27 +2,28 @@ package http
 
 import (
 	"errors"
+	"genesis_test_case/src/pkg/delivery/http/middleware"
 	"genesis_test_case/src/pkg/delivery/http/responses"
-	"genesis_test_case/src/pkg/domain"
+	"genesis_test_case/src/pkg/domain/models"
+	"genesis_test_case/src/pkg/domain/usecases"
 	myerr "genesis_test_case/src/pkg/types/errors"
-	"genesis_test_case/src/pkg/utils"
-
 	"github.com/gofiber/fiber/v2"
 )
 
 type CryptoMailingUsecases struct {
-	Exchange     CryptoExchangerUsecase
-	Mailing      CryptoMailingUsecase
-	Subscription SubscriptionUsecase
+	Mailing      usecases.CryptoMailingUsecase
+	Subscription usecases.SubscriptionUsecase
 }
 
 type MailingHandler struct {
-	usecases *CryptoMailingUsecases
+	usecases  *CryptoMailingUsecases
+	presenter ResponsePresenter
 }
 
-func NewMailingHandler(u *CryptoMailingUsecases) *MailingHandler {
+func NewMailingHandler(usecases *CryptoMailingUsecases, presenter ResponsePresenter) *MailingHandler {
 	return &MailingHandler{
-		usecases: u,
+		usecases:  usecases,
+		presenter: presenter,
 	}
 }
 
@@ -33,8 +34,8 @@ func (m *MailingHandler) SendRate(c *fiber.Ctx) error {
 	}
 
 	if len(unsent) > 0 {
-		return c.JSON(
-			responses.SendRateResponseHTTP{
+		return m.presenter.PresentSendRate(c,
+			&responses.SendRateResponse{
 				UnsentEmails: unsent,
 			},
 		)
@@ -44,9 +45,9 @@ func (m *MailingHandler) SendRate(c *fiber.Ctx) error {
 }
 
 func (m *MailingHandler) Subscribe(c *fiber.Ctx) error {
-	recipient := new(domain.Recipient)
+	recipient := new(models.Recipient)
 
-	errMsg, err := utils.ParseAndValidate(c, recipient)
+	errMsg, err := middleware.ParseAndValidate(c, recipient)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(errMsg)
 	}
@@ -56,8 +57,8 @@ func (m *MailingHandler) Subscribe(c *fiber.Ctx) error {
 		if errors.Is(err, myerr.ErrAlreadyExists) {
 			return c.SendStatus(fiber.StatusConflict)
 		}
-		return c.Status(fiber.StatusInternalServerError).JSON(
-			responses.ErrorResponseHTTP{
+		return m.presenter.PresentError(c,
+			&responses.ErrorResponse{
 				Error:   true,
 				Message: err.Error(),
 			},

@@ -3,12 +3,12 @@ package mailing
 import (
 	"encoding/base64"
 	"fmt"
+	"genesis_test_case/src/pkg/application"
+	"genesis_test_case/src/pkg/domain/models"
 	"log"
 	"os"
 
 	"genesis_test_case/src/config"
-	"genesis_test_case/src/pkg/domain"
-	"genesis_test_case/src/pkg/usecase"
 	"genesis_test_case/src/platform/gmail_api"
 
 	"github.com/pkg/errors"
@@ -19,15 +19,18 @@ type mailingGmailRepository struct {
 	gmailService *gmail.Service
 }
 
-func NewGmailRepository(srv *gmail.Service) usecase.MailingRepository {
+func NewGmailRepository(srv *gmail.Service) application.MailingRepository {
 	return &mailingGmailRepository{
 		gmailService: srv,
 	}
 }
 
-func (m *mailingGmailRepository) MultipleSending(msg *domain.EmailMessage, recipients []string) ([]string, error) {
+func (m *mailingGmailRepository) MultipleSending(
+	msg *models.EmailMessage,
+	recipients []models.EmailAddress,
+) ([]models.EmailAddress, error) {
 	var (
-		unsent  []string
+		unsent  []models.EmailAddress
 		message gmail.Message
 	)
 
