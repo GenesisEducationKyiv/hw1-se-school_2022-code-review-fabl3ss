@@ -2,6 +2,7 @@ package utils
 
 import (
 	"genesis_test_case/src/pkg/types/errors"
+
 	"golang.org/x/exp/slices"
 )
 

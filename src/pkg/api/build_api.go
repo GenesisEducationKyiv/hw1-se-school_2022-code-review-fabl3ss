@@ -114,21 +114,27 @@ func getConfiguredExchanger() application.ExchangeProvider {
 	nomicsExchangerNode := exchangers.NewExchangerNode(loggingNomicsExchanger)
 
 	chain := exchangeUsecase.NewExchangersChain()
-	chain.RegisterExchanger(
+	if err := chain.RegisterExchanger(
 		config.CoinAPIExchangerName,
 		coinapiExchangerNode,
 		coinbaseExchangerNode,
-	)
-	chain.RegisterExchanger(
+	); err != nil {
+		return nil
+	}
+	if err := chain.RegisterExchanger(
 		config.CoinbaseExchangerName,
 		coinbaseExchangerNode,
 		nomicsExchangerNode,
-	)
-	chain.RegisterExchanger(
+	); err != nil {
+		return nil
+	}
+	if err := chain.RegisterExchanger(
 		config.NomicsExchangerName,
 		nomicsExchangerNode,
 		nil,
-	)
+	); err != nil {
+		return nil
+	}
 
 	return chain.GetExchanger(
 		os.Getenv(config.EnvDefaultExchangerName),

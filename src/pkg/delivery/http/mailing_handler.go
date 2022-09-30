@@ -7,6 +7,7 @@ import (
 	"genesis_test_case/src/pkg/domain/models"
 	"genesis_test_case/src/pkg/domain/usecases"
 	myerr "genesis_test_case/src/pkg/types/errors"
+
 	"github.com/gofiber/fiber/v2"
 )
 

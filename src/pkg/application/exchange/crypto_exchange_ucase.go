@@ -10,7 +10,6 @@ import (
 )
 
 type CryptoExchangerUsecase struct {
-	pair           *models.CurrencyPair
 	cryptoProvider application.ExchangeProvider
 	cache          application.CryptoCache
 }

@@ -5,8 +5,9 @@ import (
 	"genesis_test_case/src/pkg/delivery/http/responses"
 	"genesis_test_case/src/pkg/domain/models"
 	"genesis_test_case/src/pkg/domain/usecases"
-	"github.com/gofiber/fiber/v2"
 	"os"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 type ConfigRateHandler struct {

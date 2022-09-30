@@ -1,8 +1,9 @@
 package arch
 
 import (
-	"github.com/matthewmcnew/archtest"
 	"testing"
+
+	"github.com/matthewmcnew/archtest"
 )
 
 func TestDomainLayerHaveNoDependencies(t *testing.T) {

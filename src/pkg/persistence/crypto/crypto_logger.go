@@ -18,7 +18,7 @@ func NewCryptoLogger(logger loggers.Logger) application.CryptoLogger {
 
 func (c *cryptoLogger) LogExchangeRate(provider string, rate *models.CurrencyRate) {
 	c.logger.Infow(
-		"recieved rate",
+		"received rate",
 		"provider", provider,
 		"price", rate.Price,
 		"base", rate.GetBaseCurrency(),
