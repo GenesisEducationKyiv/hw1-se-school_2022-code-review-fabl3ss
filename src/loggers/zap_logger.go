@@ -1,6 +1,7 @@
 package loggers
 
 import (
+	"genesis_test_case/src/pkg/domain/logger"
 	"genesis_test_case/src/pkg/types/filemodes"
 	"os"
 
@@ -8,7 +9,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-func NewZapLogger(logPath string) Logger {
+func NewZapLogger(logPath string) logger.Logger {
 	core := setupDefaultZapCore(logPath)
 	logger := zap.New(core, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
 	return logger.Sugar()
