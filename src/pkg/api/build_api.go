@@ -66,11 +66,11 @@ func CreateRepositories() (*application.Repositories, error) {
 	}
 	csvStorage := storage.NewCsvEmaiStorage(os.Getenv(config.EnvCsvStoragePath))
 	mailingGmailRepository := mailing.NewGmailRepository(gmailService)
-	cryptobannerBearProvidersitory := banners.BannerBearProviderFactory{}.CreateBannerProvider()
+	cryptoBannerBearProvider := banners.BannerBearProviderFactory{}.CreateBannerProvider()
 	exchangeProvider := exchangers.CoinApiProviderFactory{}.CreateExchangeProvider()
 	chartProvider := charts.CoinbaseProviderFactory{}.CreateChartProvider()
 	return &application.Repositories{
-		Banner:    cryptobannerBearProvidersitory,
+		Banner:    cryptoBannerBearProvider,
 		Storage:   csvStorage,
 		Mailer:    mailingGmailRepository,
 		Exchanger: exchangeProvider,
