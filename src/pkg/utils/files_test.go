@@ -49,7 +49,7 @@ func TestStorageIsEmpty(t *testing.T) {
 	ctl := gomock.NewController(t)
 	defer ctl.Finish()
 
-	data, err := ReadAllFromCsv(os.Getenv(config.EnvStorageFilePath))
+	data, err := ReadAllFromCsv(os.Getenv(config.EnvCsvStoragePath))
 	require.Error(t, err)
 	require.Empty(t, data)
 }

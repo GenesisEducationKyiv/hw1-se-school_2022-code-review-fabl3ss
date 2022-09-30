@@ -64,7 +64,7 @@ func CreateRepositories() (*application.Repositories, error) {
 	if err != nil {
 		return nil, err
 	}
-	csvStorage := storage.NewCsvEmaiStorage(os.Getenv(config.EnvStorageFilePath))
+	csvStorage := storage.NewCsvEmaiStorage(os.Getenv(config.EnvCsvStoragePath))
 	mailingGmailRepository := mailing.NewGmailRepository(gmailService)
 	cryptobannerBearProvidersitory := banners.BannerBearProviderFactory{}.CreateBannerProvider()
 	exchangeProvider := exchangers.CoinApiProviderFactory{}.CreateExchangeProvider()
