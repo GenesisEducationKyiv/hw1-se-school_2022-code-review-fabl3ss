@@ -77,7 +77,7 @@ func saveToken(path string, token *oauth2.Token) {
 }
 
 func UpdateService(credentialsPath string, tokenPath string) (*gmail.Service, error) {
-	config, err := getClientFromFile(credentialsPath)
+	cfg, err := getClientFromFile(credentialsPath)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +86,7 @@ func UpdateService(credentialsPath string, tokenPath string) (*gmail.Service, er
 	if err != nil {
 		return nil, err
 	}
-	tokenSource := config.TokenSource(context.TODO(), tok)
+	tokenSource := cfg.TokenSource(context.TODO(), tok)
 	newToken, err := tokenSource.Token()
 	if err != nil {
 		return nil, err

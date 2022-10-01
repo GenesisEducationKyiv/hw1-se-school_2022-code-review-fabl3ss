@@ -56,164 +56,153 @@
 ## Project structure
 
 ### Architecture diagram
-![architecture_diagram](https://raw.github.com/GenesisEducationKyiv/hw1-se-school_2022-code-review-fabl3ss/hw5/static/architecture_diagram.png)
+![architecture_diagram](https://raw.github.com/GenesisEducationKyiv/hw1-se-school_2022-code-review-fabl3ss/hw6/static/architecture_diagram.png)
 ### Folders structure
 
 ``` bash
 .
-│   .dockerignore
-│   .env
-│   .gitignore
-│   .golangci.toml
-│   docker-compose.yml
-│   Dockerfile
-│   go.mod
-│   go.sum
-│   Makefile
-│   README.md
-│
-├───.github
-│       .keep
-│
-<<<<<<< HEAD
-=======
-├───.idea
-│       hw1-se-school_2022-code-review-fabl3ss.iml
-│       modules.xml
-│       workspace.xml
-│
-├───.vscode
-│       launch.json
-│
->>>>>>> 6ba15fbcdd4ce98ad7459106697281edfc366b7b
-├───bin
-│       golangci-lint
-│
-├───credentials
-│   └───gmail
-│           client_secret.json
-│           token.json
-│
-├───logs
-├───src
-│   ├───cmd
-│   │       main.go
-│   │       start_http_server.go
-│   │
-│   ├───config
-│   │       config_integration_test.go
-│   │       env_names.go
-│   │       exchangers_names.go
-│   │       fiber_config.go
-│   │
-│   ├───loggers
-│   │       logger.go
-│   │       zap_logger.go
-│   │
-│   ├───pkg
-│   │   ├───application
-│   │   │   │   application_contracts.go
-│   │   │   │
-│   │   │   ├───exchange
-│   │   │   │       crypto_exchange_chain.go
-│   │   │   │       crypto_exchange_ucase.go
-│   │   │   │       crypto_exchange_ucase_test.go
-│   │   │   │
-│   │   │   ├───mailing
-│   │   │   │       crypto_mailing_ucase.go
-│   │   │   │       crypto_mailing_ucase_test.go
-│   │   │   │
-│   │   │   ├───mocks
-│   │   │   │       persistence_mocks.go
-│   │   │   │
-│   │   │   └───subscription
-│   │   │           subscription_ucase.go
-│   │   │           subscription_ucase_test.go
-│   │   │
-│   │   ├───delivery
-│   │   │   └───http
-│   │   │       │   config_rate_handler.go
-│   │   │       │   handlers.go
-│   │   │       │   http_contracts.go
-│   │   │       │   mailing_handler.go
-│   │   │       │
-│   │   │       ├───middleware
-│   │   │       │       fiber_middleware.go
-│   │   │       │       validator.go
-│   │   │       │       validator_test.go
-│   │   │       │
-│   │   │       ├───presenters
-│   │   │       │       json_presenter.go
-│   │   │       │
-│   │   │       ├───responses
-│   │   │       │       http_responses.go
-│   │   │       │
-│   │   │       └───routes
-│   │   │               init.go
-│   │   │               routes.go
-│   │   │               routes_contracts.go
-│   │   │
-│   │   ├───domain
-│   │   │   ├───models
-│   │   │   │       currency.go
-│   │   │   │       email.go
-│   │   │   │       rate.go
-│   │   │   │
-│   │   │   └───usecases
-│   │   │           crypto_usecase_contract.go
-│   │   │           mailing_usecase_contract.go
-│   │   │           subscription_usecase_contract.go
-│   │   │           usecases.go
-│   │   │
-│   │   ├───persistence
-│   │   │   ├───crypto
-│   │   │   │   │   crypto_cache.go
-│   │   │   │   │   crypto_logger.go
-│   │   │   │   │
-│   │   │   │   ├───banners
-│   │   │   │   │       crypto_bannerbear.go
-│   │   │   │   │       crypto_bannerbear_integration_test.go
-│   │   │   │   │
-│   │   │   │   ├───charts
-│   │   │   │   │       coinbase_chart_integration_test.go
-│   │   │   │   │       coinbase_chart_provider.go
-│   │   │   │   │
-│   │   │   │   └───exchangers
-│   │   │   │           coinapi_exchange_provider.go
-│   │   │   │           coinapi_integration_test.go
-│   │   │   │           coinbase_exchange_provider.go
-│   │   │   │           coinbase_integration_test.go
-│   │   │   │           crypto_exchanger_node.go
-│   │   │   │           crypto_logging_exchanger.go
-│   │   │   │           exchangers_test.go
-│   │   │   │           nomics_exchange_provider.go
-│   │   │   │           nomics_integration_test.go
-│   │   │   │
-│   │   │   ├───mailing
-│   │   │   │       mailing_gmail.go
-│   │   │   │
-│   │   │   └───storage
-│   │   │       ├───csv
-│   │   │       │       csv_email_storage.go
-│   │   │       │
-│   │   │       └───redis
-│   │   │               redis_cache.go
-│   │   │
-│   │   ├───types
-│   │   │   ├───errors
-│   │   │   │       errors.go
-│   │   │   │
-│   │   │   └───filemodes
-│   │   │           filemodes.go
-│   │   │
-│   │   └───utils
-│   │           files.go
-│   │           files_test.go
-│   │           http.go
-│   │           slices.go
-│   │           slices_test.go
-    │       utils_arch_test.go
-    │
-    └───postman
-            test_postman.json
+├── .dockerignore
+├── .env
+├── .github
+│   └── workflows
+│       └── golangci-lint.yml
+├── .gitignore
+├── .golangci.toml
+├── Dockerfile
+├── Makefile
+├── README.md
+├── bin
+│   └── golangci-lint
+├── credentials
+│   └── gmail
+│       ├── client_secret.json
+│       └── token.json
+├── docker-compose.yml
+├── go.mod
+├── go.sum
+├── logs
+│   └── default.log
+├── src
+│   ├── cmd
+│   │   └── main.go
+│   ├── config
+│   │   ├── banners_config.go
+│   │   ├── cache_config.go
+│   │   ├── config_integration_test.go
+│   │   ├── currency_config.go
+│   │   ├── exchangers_config.go
+│   │   ├── http_server_config.go
+│   │   ├── logger_config,go.go
+│   │   ├── mailing_config.go
+│   │   └── storage_config.go
+│   ├── loggers
+│   │   └── zap_logger.go
+│   ├── pkg
+│   │   ├── api
+│   │   │   └── build_api.go
+│   │   ├── application
+│   │   │   ├── application_contracts.go
+│   │   │   ├── exchange
+│   │   │   │   ├── crypto_exchange_chain.go
+│   │   │   │   ├── crypto_exchange_ucase.go
+│   │   │   │   └── crypto_exchange_ucase_test.go
+│   │   │   ├── mailing
+│   │   │   │   ├── crypto_mailing_ucase.go
+│   │   │   │   └── crypto_mailing_ucase_test.go
+│   │   │   ├── mocks
+│   │   │   │   └── persistence_mocks.go
+│   │   │   └── subscription
+│   │   │       ├── subscription_ucase.go
+│   │   │       └── subscription_ucase_test.go
+│   │   ├── delivery
+│   │   │   └── http
+│   │   │       ├── config_rate_handler.go
+│   │   │       ├── handlers.go
+│   │   │       ├── http_contracts.go
+│   │   │       ├── mailing_handler.go
+│   │   │       ├── middleware
+│   │   │       │   ├── fiber_middleware.go
+│   │   │       │   ├── validator.go
+│   │   │       │   └── validator_test.go
+│   │   │       ├── presenters
+│   │   │       │   └── json_presenter.go
+│   │   │       ├── responses
+│   │   │       │   └── http_responses.go
+│   │   │       ├── routes
+│   │   │       │   ├── init.go
+│   │   │       │   ├── routes.go
+│   │   │       │   └── routes_contracts.go
+│   │   │       └── start_http_server.go
+│   │   ├── domain
+│   │   │   ├── logger
+│   │   │   │   └── logger.go
+│   │   │   ├── models
+│   │   │   │   ├── currency.go
+│   │   │   │   ├── email.go
+│   │   │   │   ├── rate.go
+│   │   │   │   └── recipient.go
+│   │   │   └── usecases
+│   │   │       ├── crypto_usecase_contract.go
+│   │   │       ├── mailing_usecase_contract.go
+│   │   │       ├── subscription_usecase_contract.go
+│   │   │       └── usecases.go
+│   │   ├── persistence
+│   │   │   ├── crypto
+│   │   │   │   ├── banners
+│   │   │   │   │   ├── crypto_bannerbear.go
+│   │   │   │   │   └── crypto_bannerbear_integration_test.go
+│   │   │   │   ├── charts
+│   │   │   │   │   ├── coinbase_chart_integration_test.go
+│   │   │   │   │   └── coinbase_chart_provider.go
+│   │   │   │   ├── crypto_cache.go
+│   │   │   │   ├── crypto_logger.go
+│   │   │   │   └── exchangers
+│   │   │   │       ├── coinapi_exchange_provider.go
+│   │   │   │       ├── coinapi_integration_test.go
+│   │   │   │       ├── coinbase_exchange_provider.go
+│   │   │   │       ├── coinbase_integration_test.go
+│   │   │   │       ├── crypto_exchanger_node.go
+│   │   │   │       ├── crypto_logging_exchanger.go
+│   │   │   │       ├── exchangers_test.go
+│   │   │   │       ├── nomics_exchange_provider.go
+│   │   │   │       └── nomics_integration_test.go
+│   │   │   ├── mailing
+│   │   │   │   └── mailing_gmail.go
+│   │   │   └── storage
+│   │   │       ├── csv
+│   │   │       │   └── csv_email_storage.go
+│   │   │       └── redis
+│   │   │           └── redis_cache.go
+│   │   ├── types
+│   │   │   ├── errors
+│   │   │   │   └── errors.go
+│   │   │   └── filemodes
+│   │   │       └── filemodes.go
+│   │   └── utils
+│   │       ├── files.go
+│   │       ├── files_test.go
+│   │       ├── http.go
+│   │       ├── slices.go
+│   │       ├── slices_test.go
+│   │       └── strings.go
+│   └── platform
+│       ├── csv
+│       │   ├── data.csv
+│       │   └── test.csv
+│       └── gmail_api
+│           └── gmail_api.go
+├── static
+│   ├── architecture_diagram.png
+│   └── crypto-message.html
+└── tests
+    ├── arch
+    │   ├── application_layer_arch_test.go
+    │   ├── domain_layer_arch_test.go
+    │   ├── packages_names.go
+    │   ├── persistence_layer_arch_test.go
+    │   ├── platform_layer_arch_test.go
+    │   ├── presentation_layer_arch_test.go
+    │   └── utils_arch_test.go
+    └── postman
+        └── test_postman.json
 ```

@@ -64,13 +64,13 @@ func CreateRepositories() (*application.Repositories, error) {
 	if err != nil {
 		return nil, err
 	}
-	csvStorage := storage.NewCsvEmaiStorage(os.Getenv(config.EnvStorageFilePath))
+	csvStorage := storage.NewCsvEmaiStorage(os.Getenv(config.EnvCsvStoragePath))
 	mailingGmailRepository := mailing.NewGmailRepository(gmailService)
-	cryptobannerBearProvidersitory := banners.BannerBearProviderFactory{}.CreateBannerProvider()
+	cryptoBannerBearProvider := banners.BannerBearProviderFactory{}.CreateBannerProvider()
 	exchangeProvider := exchangers.CoinApiProviderFactory{}.CreateExchangeProvider()
 	chartProvider := charts.CoinbaseProviderFactory{}.CreateChartProvider()
 	return &application.Repositories{
-		Banner:    cryptobannerBearProvidersitory,
+		Banner:    cryptoBannerBearProvider,
 		Storage:   csvStorage,
 		Mailer:    mailingGmailRepository,
 		Exchanger: exchangeProvider,
@@ -114,21 +114,27 @@ func getConfiguredExchanger() application.ExchangeProvider {
 	nomicsExchangerNode := exchangers.NewExchangerNode(loggingNomicsExchanger)
 
 	chain := exchangeUsecase.NewExchangersChain()
-	chain.RegisterExchanger(
+	if err := chain.RegisterExchanger(
 		config.CoinAPIExchangerName,
 		coinapiExchangerNode,
 		coinbaseExchangerNode,
-	)
-	chain.RegisterExchanger(
+	); err != nil {
+		return nil
+	}
+	if err := chain.RegisterExchanger(
 		config.CoinbaseExchangerName,
 		coinbaseExchangerNode,
 		nomicsExchangerNode,
-	)
-	chain.RegisterExchanger(
+	); err != nil {
+		return nil
+	}
+	if err := chain.RegisterExchanger(
 		config.NomicsExchangerName,
 		nomicsExchangerNode,
 		nil,
-	)
+	); err != nil {
+		return nil
+	}
 
 	return chain.GetExchanger(
 		os.Getenv(config.EnvDefaultExchangerName),

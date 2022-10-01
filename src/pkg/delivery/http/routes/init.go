@@ -1,12 +1,13 @@
 package routes
 
 import (
+	"github.com/gofiber/fiber/v2"
+
 	"genesis_test_case/src/pkg/api"
 	"genesis_test_case/src/pkg/delivery/http"
 	"genesis_test_case/src/pkg/delivery/http/middleware"
 	"genesis_test_case/src/pkg/delivery/http/presenters"
 	"genesis_test_case/src/pkg/domain/usecases"
-	"github.com/gofiber/fiber/v2"
 )
 
 func InitRoutes(app *fiber.App) error {
@@ -18,7 +19,7 @@ func InitRoutes(app *fiber.App) error {
 	if err != nil {
 		return err
 	}
-	handlers, err := createHandlers(ucases)
+	handlers := createHandlers(ucases)
 	if err != nil {
 		return err
 	}
@@ -29,7 +30,7 @@ func InitRoutes(app *fiber.App) error {
 	return nil
 }
 
-func createHandlers(usecases *usecases.Usecases) (*Handlers, error) {
+func createHandlers(usecases *usecases.Usecases) *Handlers {
 	cryptoMailingUsecases := &http.CryptoMailingUsecases{
 		Mailing:      usecases.CryptoMailing,
 		Subscription: usecases.Subscription,
@@ -41,5 +42,5 @@ func createHandlers(usecases *usecases.Usecases) (*Handlers, error) {
 	return &Handlers{
 		Mailing: mailingHandler,
 		Rate:    rateHandler,
-	}, nil
+	}
 }

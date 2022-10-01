@@ -12,10 +12,6 @@ import (
 
 var myValidator = validator.New()
 
-func GetValidator() *validator.Validate {
-	return myValidator
-}
-
 func validatorErrors(err error) string {
 	errorMessage := new(bytes.Buffer)
 
