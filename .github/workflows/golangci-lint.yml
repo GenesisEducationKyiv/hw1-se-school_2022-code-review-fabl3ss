@@ -27,7 +27,7 @@ jobs:
           version: v1.49.0
 
           # Optional: working directory, useful for monorepos
-          # working-directory: ./...
+          working-directory: crypto-service
 
           # Optional: golangci-lint command line arguments.
           # args: --issues-exit-code=0 --config=./.golangci.toml
