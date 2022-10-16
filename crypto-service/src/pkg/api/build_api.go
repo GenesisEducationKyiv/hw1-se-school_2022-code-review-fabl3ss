@@ -17,6 +17,7 @@ import (
 	storage "genesis_test_case/src/pkg/persistence/storage/csv"
 	"genesis_test_case/src/pkg/persistence/storage/redis"
 	"genesis_test_case/src/platform/gmail_api"
+	"log"
 	"os"
 	"strconv"
 	"time"
@@ -69,6 +70,7 @@ func CreateRepositories() (*application.Repositories, error) {
 	cryptoBannerBearProvider := banners.BannerBearProviderFactory{}.CreateBannerProvider()
 	exchangeProvider := exchangers.CoinApiProviderFactory{}.CreateExchangeProvider()
 	chartProvider := charts.CoinbaseProviderFactory{}.CreateChartProvider()
+
 	return &application.Repositories{
 		Banner:    cryptoBannerBearProvider,
 		Storage:   csvStorage,
@@ -77,6 +79,7 @@ func CreateRepositories() (*application.Repositories, error) {
 		Chart:     chartProvider,
 	}, nil
 }
+
 func setupCryptoCache() (application.CryptoCache, error) {
 	cryptoCacheDB, err := strconv.Atoi(os.Getenv(config.CryptoCacheDB))
 	if err != nil {
@@ -98,7 +101,9 @@ func setupCryptoCache() (application.CryptoCache, error) {
 }
 
 func getConfiguredExchanger() application.ExchangeProvider {
-	logger := loggers.NewZapLogger(os.Getenv(config.EnvLogPath))
+	log.Println("Start logger")
+	logger := loggers.NewZapRabbitMQLogger()
+	log.Println("2Start logger")
 	cryptoLogger := crypto.NewCryptoLogger(logger)
 
 	coinapiExchanger := exchangers.CoinApiProviderFactory{}.CreateExchangeProvider()

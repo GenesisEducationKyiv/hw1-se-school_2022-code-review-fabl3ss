@@ -10,16 +10,51 @@ services:
     networks:
       - crypto-mailer
 
+  rabbit-mq:
+    image: "rabbitmq:3.11.0-management"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+    volumes:
+      - rabbit_mq:/var/lib/rabbitmq/mnesia/
+    networks:
+      - crypto-mailer
+
   mailer:
-    build: .
+    build: ./crypto-service
     ports:
       - "8000:8000"
+    restart: on-failure
     depends_on:
-      - redis-cache 
+      rabbit-mq:
+        condition: service_healthy
+      redis-cache:
+        condition: service_started
+    networks:
+      - crypto-mailer
+
+  logs-consumer:
+    build: ./logs-consumer
+    ports:
+      - "8001:8000"
+    restart: on-failure
+    depends_on:
+      - mailer
     networks:
       - crypto-mailer
 
 volumes:
+  rabbit_mq:
+    driver: local
   cache:
     driver: local
 
