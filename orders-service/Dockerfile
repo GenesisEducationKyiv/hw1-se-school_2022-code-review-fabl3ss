@@ -1,8 +1,8 @@
 FROM golang:alpine
 
-LABEL mainteiner="mailer"
+LABEL mainteiner="orders"
 
-WORKDIR /mailer
+WORKDIR /orders
 
 COPY go.mod .
 

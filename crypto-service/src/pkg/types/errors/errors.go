@@ -10,6 +10,6 @@ var (
 	ErrValidationFailed    = errors.New("validation falied")
 	ErrInvalidInput        = errors.New("invalid input")
 	ErrNoDataProvided      = errors.New("no data provided")
-	ErrNoSubscribers       = errors.New("no subscribers in storage")
+	ErrNoSubscribers       = errors.New("no subscribers in platform")
 	ErrNoCache             = errors.New("cache is empty")
 )

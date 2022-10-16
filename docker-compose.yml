@@ -29,6 +29,58 @@ services:
     networks:
       - crypto-mailer
 
+  dtm:
+    image: yedf/dtm
+    container_name: dtm
+    restart: always
+    ports:
+      - "36790:36790"
+      - "36789:36789"
+    networks:
+      - crypto-mailer
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    restart: always
+    ports:
+      - "8004:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=saga
+      - MYSQL_USER=saga
+      - MYSQL_PASSWORD=saga
+    networks:
+      - crypto-mailer
+
+  orders:
+     container_name: orders-service
+     build: ./orders-service
+     restart: always
+     environment:
+       - DTM_COORDINATOR=http://dtm:36789/api/dtmsvr
+       - CUSTOMERS_SERVICE_URL=http://customers:8080
+     ports:
+       - "8003:8000"
+     depends_on:
+       - dtm
+       - customers
+     networks:
+       - crypto-mailer
+
+  customers:
+    container_name: customers-service
+    build: ./customers-service
+    restart: always
+    environment:
+      - MYSQL_URL=saga:saga@tcp(mysql:3306)/saga?charset=utf8mb4&parseTime=True&loc=Local
+    ports:
+      - "8002:8000"
+    depends_on:
+      - mysql
+    networks:
+      - crypto-mailer
+
   mailer:
     build: ./crypto-service
     ports:
@@ -38,6 +90,8 @@ services:
       rabbit-mq:
         condition: service_healthy
       redis-cache:
+        condition: service_started
+      orders-service:
         condition: service_started
     networks:
       - crypto-mailer

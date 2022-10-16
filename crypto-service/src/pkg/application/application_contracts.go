@@ -35,6 +35,10 @@ type CryptoBannerProvider interface {
 	GetCryptoBannerUrl(chart []float64, rate *models.CurrencyRate) (string, error)
 }
 
+type CustomerProvider interface {
+	CreateCustomer(recipient *models.Recipient) error
+}
+
 type Cache interface {
 	GetCache(key string) ([]byte, error)
 	SetCache(key string, value interface{}) error
@@ -55,6 +59,7 @@ type Repositories struct {
 	Chart     ChartProvider
 	Storage   EmailStorage
 	Mailer    MailingRepository
+	Customer  CustomerProvider
 }
 
 type CryptoMailingRepositories struct {
