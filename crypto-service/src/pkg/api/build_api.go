@@ -13,6 +13,7 @@ import (
 	"genesis_test_case/src/pkg/persistence/crypto/banners"
 	"genesis_test_case/src/pkg/persistence/crypto/charts"
 	"genesis_test_case/src/pkg/persistence/crypto/exchangers"
+	"genesis_test_case/src/pkg/persistence/customer"
 	"genesis_test_case/src/pkg/persistence/mailing"
 	storage "genesis_test_case/src/pkg/persistence/storage/csv"
 	"genesis_test_case/src/pkg/persistence/storage/redis"
@@ -49,12 +50,17 @@ func CreateUsecases(repos *application.Repositories) (*usecases.Usecases, error)
 		cryptoCache,
 	)
 
-	subscriptionUsecase := subscriptionUsecase.NewSubscriptionUsecase(
+	subscribeUsecase := subscriptionUsecase.NewSubscriptionUsecase(
 		repos.Storage,
 	)
 
+	subscriptionCustomerUsecase := subscriptionUsecase.NewSubscriptionCustomerUsecase(
+		subscribeUsecase,
+		repos.Customer,
+	)
+
 	return &usecases.Usecases{
-		Subscription:    subscriptionUsecase,
+		Subscription:    subscriptionCustomerUsecase,
 		CryptoMailing:   cryptoMailingBecause,
 		CryptoExchanger: cryptoExchangeUsecase,
 	}, nil
@@ -70,6 +76,7 @@ func CreateRepositories() (*application.Repositories, error) {
 	cryptoBannerBearProvider := banners.BannerBearProviderFactory{}.CreateBannerProvider()
 	exchangeProvider := exchangers.CoinApiProviderFactory{}.CreateExchangeProvider()
 	chartProvider := charts.CoinbaseProviderFactory{}.CreateChartProvider()
+	customerProvider := customer.NewCustomerProvider(os.Getenv(config.EnvCustomersOrderServiceURL))
 
 	return &application.Repositories{
 		Banner:    cryptoBannerBearProvider,
@@ -77,6 +84,7 @@ func CreateRepositories() (*application.Repositories, error) {
 		Mailer:    mailingGmailRepository,
 		Exchanger: exchangeProvider,
 		Chart:     chartProvider,
+		Customer:  customerProvider,
 	}, nil
 }
 
